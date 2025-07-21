@@ -82,7 +82,7 @@
       <div class="card-body p-5">
         <div class="logo-container">
           <img src="images/logo.png" alt="TaxTrek Logo" class="logo">
-          <h2 class="title">TaxTrek</h2>
+          <h2 class="title">TaxTrek - Auto Deploy Test ✅</h2>
         </div>
         <form>
           <div class="mb-3">
