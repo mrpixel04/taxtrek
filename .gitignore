@@ -32,6 +32,12 @@ vendor/
 .env.local
 .env.*.local
 
+# Google Cloud credentials
+key.json
+*service-account*.json
+gcp-credentials.json
+*-key.json
+
 # Cache and temporary files
 cache/
 tmp/
