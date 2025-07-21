@@ -22,37 +22,39 @@ jobs:
         
     - name: Deploy to VM
       run: |
-        # Create deployment package (more robust tar command)
-        tar --exclude='.git' --exclude='.github' --exclude='*.tar.gz' --exclude='.DS_Store' -czf taxtrek-deploy.tar.gz .
+        # Remove problematic files first
+        rm -f .DS_Store
+        find . -name ".DS_Store" -delete 2>/dev/null || true
+        
+        # Create deployment package with explicit file list
+        tar --exclude='.git' --exclude='.github' --exclude='*.tar.gz' --exclude='.DS_Store' --exclude='.vscode' -czf taxtrek-deploy.tar.gz *
         
         # Copy to VM
-        gcloud compute scp taxtrek-deploy.tar.gz apps-io-server:~/taxtrek-deploy.tar.gz --zone=asia-southeast1-a --quiet
+        gcloud compute scp taxtrek-deploy.tar.gz apps-io-server:~/taxtrek-deploy.tar.gz --zone=asia-southeast1-a
         
         # Deploy on VM
         gcloud compute ssh apps-io-server --zone=asia-southeast1-a --command="
-          # Create backup of current deployment
-          sudo rm -rf /tmp/taxtrek-backup 2>/dev/null || true
-          sudo mv /var/www/html/taskforce /tmp/taxtrek-backup 2>/dev/null || true
+          # Backup current deployment
+          sudo cp -r /var/www/html/taskforce /tmp/taxtrek-backup-\$(date +%Y%m%d_%H%M%S) 2>/dev/null || echo 'No existing backup needed'
           
-          # Create fresh deployment directory
-          sudo mkdir -p /var/www/html/taskforce
-          sudo rm -rf /tmp/taxtrek-deploy 2>/dev/null || true
-          mkdir -p /tmp/taxtrek-deploy
+          # Clear target directory
+          sudo rm -rf /var/www/html/taskforce/*
           
-          # Extract and deploy
-          tar -xzf ~/taxtrek-deploy.tar.gz -C /tmp/taxtrek-deploy
-          sudo cp -r /tmp/taxtrek-deploy/* /var/www/html/taskforce/
+          # Extract directly to target
+          cd /tmp
+          tar -xzf ~/taxtrek-deploy.tar.gz
+          sudo cp -r * /var/www/html/taskforce/
           
-          # Set permissions
+          # Set correct permissions
           sudo chown -R www-data:www-data /var/www/html/taskforce
           sudo chmod -R 755 /var/www/html/taskforce
           
           # Cleanup
           rm -f ~/taxtrek-deploy.tar.gz
-          sudo rm -rf /tmp/taxtrek-deploy
+          rm -rf /tmp/api /tmp/arial /tmp/classes /tmp/images /tmp/tcpdf* /tmp/vendor /tmp/*.php /tmp/*.csv /tmp/*.md 2>/dev/null || true
           
-          echo 'Deployment completed successfully ✅'
-        " --quiet
+          echo '🎉 TaxTrek deployed successfully to https://aplikasi-io.com/taskforce/'
+        "
 
     - name: Verify Deployment
       run: |
