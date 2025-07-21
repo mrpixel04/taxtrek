@@ -22,26 +22,36 @@ jobs:
         
     - name: Deploy to VM
       run: |
-        # Create deployment package
-        tar -czf taxtrek-deploy.tar.gz --exclude='.git' --exclude='.github' --exclude='*.tar.gz' .
+        # Create deployment package (more robust tar command)
+        tar --exclude='.git' --exclude='.github' --exclude='*.tar.gz' --exclude='.DS_Store' -czf taxtrek-deploy.tar.gz .
         
         # Copy to VM
         gcloud compute scp taxtrek-deploy.tar.gz apps-io-server:~/taxtrek-deploy.tar.gz --zone=asia-southeast1-a --quiet
         
         # Deploy on VM
         gcloud compute ssh apps-io-server --zone=asia-southeast1-a --command="
-          cd /tmp &&
-          sudo rm -rf taxtrek-backup &&
-          sudo mv /var/www/html/taskforce /tmp/taxtrek-backup 2>/dev/null || true &&
-          sudo mkdir -p /var/www/html/taskforce &&
-          tar -xzf ~/taxtrek-deploy.tar.gz -C /tmp/taxtrek-new 2>/dev/null || sudo mkdir -p /tmp/taxtrek-new &&
-          sudo tar -xzf ~/taxtrek-deploy.tar.gz -C /tmp/taxtrek-new &&
-          sudo cp -r /tmp/taxtrek-new/* /var/www/html/taskforce/ &&
-          sudo chown -R www-data:www-data /var/www/html/taskforce &&
-          sudo chmod -R 755 /var/www/html/taskforce &&
-          sudo rm -rf /tmp/taxtrek-new &&
-          rm -f ~/taxtrek-deploy.tar.gz &&
-          echo 'Deployment completed successfully'
+          # Create backup of current deployment
+          sudo rm -rf /tmp/taxtrek-backup 2>/dev/null || true
+          sudo mv /var/www/html/taskforce /tmp/taxtrek-backup 2>/dev/null || true
+          
+          # Create fresh deployment directory
+          sudo mkdir -p /var/www/html/taskforce
+          sudo rm -rf /tmp/taxtrek-deploy 2>/dev/null || true
+          mkdir -p /tmp/taxtrek-deploy
+          
+          # Extract and deploy
+          tar -xzf ~/taxtrek-deploy.tar.gz -C /tmp/taxtrek-deploy
+          sudo cp -r /tmp/taxtrek-deploy/* /var/www/html/taskforce/
+          
+          # Set permissions
+          sudo chown -R www-data:www-data /var/www/html/taskforce
+          sudo chmod -R 755 /var/www/html/taskforce
+          
+          # Cleanup
+          rm -f ~/taxtrek-deploy.tar.gz
+          sudo rm -rf /tmp/taxtrek-deploy
+          
+          echo 'Deployment completed successfully ✅'
         " --quiet
 
     - name: Verify Deployment
