@@ -1,0 +1,51 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Google Cloud CLI
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+        export_default_credentials: true
+        
+    - name: Deploy to VM
+      run: |
+        # Create deployment package
+        tar -czf taxtrek-deploy.tar.gz --exclude='.git' --exclude='.github' --exclude='*.tar.gz' .
+        
+        # Copy to VM
+        gcloud compute scp taxtrek-deploy.tar.gz apps-io-server:~/taxtrek-deploy.tar.gz --zone=asia-southeast1-a --quiet
+        
+        # Deploy on VM
+        gcloud compute ssh apps-io-server --zone=asia-southeast1-a --command="
+          cd /tmp &&
+          sudo rm -rf taxtrek-backup &&
+          sudo mv /var/www/html/taskforce /tmp/taxtrek-backup 2>/dev/null || true &&
+          sudo mkdir -p /var/www/html/taskforce &&
+          tar -xzf ~/taxtrek-deploy.tar.gz -C /tmp/taxtrek-new 2>/dev/null || sudo mkdir -p /tmp/taxtrek-new &&
+          sudo tar -xzf ~/taxtrek-deploy.tar.gz -C /tmp/taxtrek-new &&
+          sudo cp -r /tmp/taxtrek-new/* /var/www/html/taskforce/ &&
+          sudo chown -R www-data:www-data /var/www/html/taskforce &&
+          sudo chmod -R 755 /var/www/html/taskforce &&
+          sudo rm -rf /tmp/taxtrek-new &&
+          rm -f ~/taxtrek-deploy.tar.gz &&
+          echo 'Deployment completed successfully'
+        " --quiet
+
+    - name: Verify Deployment
+      run: |
+        echo "✅ Deployment completed!"
+        echo "🌐 Your application is now live at: https://aplikasi-io.com/taskforce"
+        echo "📝 Check the deployment by visiting the URL above" 
