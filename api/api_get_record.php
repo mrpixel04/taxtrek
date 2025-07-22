@@ -1,10 +1,7 @@
 <?php 
 
-
+// Include database connection
 include('../classes/conn.php');
-
-
-$connection = new mysqli($host, $username, $password, $database);
 
 if($connection){
 	echo "OK";
