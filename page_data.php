@@ -1,205 +1,229 @@
 <?php
-
 // Include database connection
-include("classes/conn.php");
-
-
-
-
-//echo $_SERVER['PHP_SELF'];
-
-//$url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-
-//$url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[PHP_SELF]";
-
+include("db_connect.php");
 
 $base_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[SCRIPT_NAME]";
 $base_url = dirname($base_url) . '/';
-
-//echo $base_url;
-
-
 ?>
-<link href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-<div class="container">
 
-	<div class="table-responsive">
+<div class="page-card">
+    <div class="card-header">
+        <h4><i class="fas fa-database me-2"></i>Data Taskforce</h4>
+    </div>
+    <div class="card-body">
+        <!-- Search and Filter -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                    <input type="text" class="form-control" id="searchInput" placeholder="Cari data...">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <select class="form-select" id="statusFilter">
+                    <option value="">Semua Status</option>
+                    <option value="BELUM BUAT">Belum Buat</option>
+                    <option value="SUDAH BUAT">Sudah Buat</option>
+                </select>
+            </div>
+        </div>
 
-		<table id="dataTable" class="table table-bordered table-striped">
-	        <thead>
-	            <tr>
-	                <th>BIL</th>
-	                <!--<th>NOMBOR FAIL</th>-->
-	                <!--<th>NO. RUMAH</th>-->
-	                <th>NAMA PEMILIK</th>
-	                <th>ALAMAT 1</th>
-	                <th>STATUS</th>
-	                <th>STATUS KEMASKINI</th>
-	                <th>TINDAKAN</th>
-	            </tr>
-	        </thead>
-	        <tbody>
-	        	 <?php
-	            
+        <!-- Data Table -->
+        <div class="table-responsive">
+            <table class="table table-striped table-hover" id="dataTable">
+                <thead class="table-dark">
+                    <tr>
+                        <th>BIL</th>
+                        <th>NAMA PEMILIK</th>
+                        <th>ALAMAT 1</th>
+                        <th>STATUS</th>
+                        <th>STATUS KEMASKINI</th>
+                        <th>TINDAKAN</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    if ($connection !== null) {
+                        $sql = "SELECT * FROM TBL_DATA";
+                        $result = mysqli_query($connection, $sql);
 
-	        
-	            //$sql = "SELECT * FROM TBL_DATA WHERE STATUS_DATA='BELUM BUAT'";
-	            $sql = "SELECT * FROM TBL_DATA";
-	            $result = $connection->query($sql);
+                        if ($result && mysqli_num_rows($result) > 0) {
+                            $bil = 1;
+                            while($row = mysqli_fetch_assoc($result)) {
+                                echo "<tr>";
+                                echo "<td>" . $bil . "</td>";
+                                echo "<td>" . htmlspecialchars($row['NAMA_PEMILIK'] ?? 'N/A') . "</td>";
+                                echo "<td>" . htmlspecialchars($row['ALAMAT_1'] ?? 'N/A') . "</td>";
+                                echo "<td>";
+                                $status = $row['STATUS_DATA'] ?? 'N/A';
+                                $statusClass = ($status == 'SUDAH BUAT') ? 'success' : 'warning';
+                                echo "<span class='badge bg-$statusClass'>$status</span>";
+                                echo "</td>";
+                                echo "<td>";
+                                $statusKemaskini = $row['STATUS_KEMASKINI'] ?? 'N/A';
+                                $statusKemaskiniClass = ($statusKemaskini == 'SUDAH KEMASKINI') ? 'success' : 'secondary';
+                                echo "<span class='badge bg-$statusKemaskiniClass'>$statusKemaskini</span>";
+                                echo "</td>";
 
-	            if ($result->num_rows > 0) {
-	                while ($row = $result->fetch_assoc()) {
-	                    echo "<tr>";
-	                    echo "<td>{$row['iddata']}</td>";
-	                    //echo "<td>{$row['NOFAILTF']}</td>";
-	                    //echo "<td>{$row['NORUMAH']}</td>";
-	                    echo "<td>{$row['NAMAPEMILIK']}</td>";
-	                    echo "<td>{$row['ALAMAT1']}</td>";
-	         
-	                   
-	                    	if($row['STATUS_DATA'] == "BELUM BUAT"){
-	               
-	            		?>
-	            			<td><span class='badge text-bg-danger'>BELUM BUAT</span></td>
+                                // Action buttons
+                                $urlprintnotisbm = $base_url."cetaknotisbm.php?data=".$row['iddata'];
+                                $urlprintnotisbi = $base_url."printnotisbi.php?data=".$row['iddata'];
+                                $urleditnotis = "?page=editalamat.php&data=".$row['iddata'];
 
-	            		<?php 
+                                echo "<td>";
+                                echo "<div class='btn-group btn-group-sm' role='group'>";
+                                echo "<button type='button' class='btn btn-outline-primary btn-sm view-btn' data-details='" . htmlspecialchars(json_encode($row)) . "'>";
+                                echo "<i class='fas fa-eye me-1'></i>Lihat</button>";
+                                echo "<a href='".$urleditnotis."' class='btn btn-outline-warning btn-sm'>";
+                                echo "<i class='fas fa-edit me-1'></i>Alamat</a>";
+                                echo "<a href='".$urlprintnotisbm."' class='btn btn-outline-success btn-sm' target='_blank'>";
+                                echo "<i class='fas fa-print me-1'></i>Notis</a>";
+                                echo "</div>";
+                                echo "</td>";
+                                echo "</tr>";
+                                $bil++;
+                            }
+                        } else {
+                            echo "<tr><td colspan='6' class='text-center text-muted py-4'>";
+                            echo "<i class='fas fa-inbox fa-3x mb-3 d-block'></i>";
+                            echo "Tiada data untuk dipaparkan";
+                            echo "</td></tr>";
+                        }
+                        mysqli_close($connection);
+                    } else {
+                        echo "<tr><td colspan='6' class='text-center text-danger'>Ralat sambungan pangkalan data</td></tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
 
-	            			}else if($row['STATUS_DATA'] == "BAYAR"){
-
-	            		?>
-	            			<td><span class='badge text-bg-warning'>TELAH BAYAR</span></td>
-	            		<?php
-
-	            			}else{
-
-	            		?>
-	            			<td><span class='badge text-bg-success'>BUAT</span></td>
-	            		<?php
-
-	            			}
-
-	            			if($row['STATUS_UPDATE'] == "YES"){
-
-	            		?>
-	            				<td><span class='badge text-bg-success'>SUDAH KEMASKINI</span></td>
-
-	            		<?php 
-
-	            			}else{
-
-	            		?>
-	            				<td><span class='badge text-bg-danger'>BELUM KEMASKINI</span></td>
-	            		<?php 
-
-	            			}
-
-	            		$urlhome = $_SERVER['PHP_SELF'].'?page=page_data.php';
-
-
-
-	            		
-
-	            		//$urlprintnotis = "http://localhost/flutterapps/api/taskforce/printnotis.php?data=".$row['iddata'];
-
-	            		//$urlprintnotisbm = $base_url."printnotis.php?data=".$row['iddata'];
-	            		
-	            		$urlprintnotisbm = $base_url."cetaknotisbm.php?data=".$row['iddata'];
-
-	            		$urlprintnotisbi = $base_url."printnotisbi.php?data=".$row['iddata'];
-
-	            		$urleditdata = "?page=page_edit_data.php&data=".$row['iddata'];
-	            		
-	            		$urleditnotis = "?page=editalamat.php&data=".$row['iddata'];
-
-	            		
-
-	                    //echo "<td><a href='#' class='view-link' data-details='" . htmlspecialchars(json_encode($row)) . "'>Lihat</a> | <a href='".$urleditnotis."' class='edit-link'>Alamat</a> | <a href='".$urleditdata."' class='edit-link'>Data</a> | <a href='".$urlprintnotisbm."'>Notis BM</a> | <a href='".$urlprintnotisbi."'>Notis BI</a></td>";
-	                    
-	                    //echo "<td><a href='#' class='view-link' data-details='" . htmlspecialchars(json_encode($row)) . "'>Lihat</a> | <a href='".$urleditnotis."' class='edit-link'>Kemaskini Alamat</a> | <a href='".$urleditdata."' class='edit-link'>Data</a> | <a href='".$urlprintnotisbm."'>Notis BM</a> | <a href='".$urlprintnotisbi."'>Notis BI</a></td>";
-
-	                    // echo "<td><a href='#' class='view-link' data-details='" . htmlspecialchars(json_encode($row)) . "'>Lihat</a> | <a href='".$urleditnotis."' class='edit-link'>Kemaskini Alamat</a> | <a href='".$urlprintnotisbm."'>Notis BM</a> | <a href='".$urlprintnotisbi."'>Notis BI</a></td>";
-
-	                     echo "<td><a href='#' class='view-link' data-details='" . htmlspecialchars(json_encode($row)) . "'>Lihat</a> | <a href='".$urleditnotis."' class='edit-link'>Kemaskini Alamat</a> | <a href='".$urlprintnotisbm."'>Notis BM</a></td>";
-
-	                    echo "</tr>";
-	                }
-	            }else{
-	            	echo "huhuh";
-	            }
-
-	            // Close the database connection
-	            $connection->close();
-	            ?>
-	        </tbody>
-	    </table>
-	           
-	</div>
-
+        <!-- Pagination -->
+        <nav aria-label="Page navigation" id="paginationNav" style="display: none;">
+            <ul class="pagination justify-content-center" id="pagination">
+            </ul>
+        </nav>
+    </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Include DataTables JavaScript -->
-<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.min.js"></script>
-<script type="text/javascript">
-
-
-	$(document).ready(function() {
-
-
-
-		var table = $('#dataTable').DataTable({
-	        "paging": true,
-	        "ordering": true,
-	        "info": true,
-	        "pageLength": 90, 
-    	});
-
-    	$('#dataTable tbody').on('click', 'a.view-link', function() {
-		    var data = $(this).data('details');
-
-		     var modalDetails = $('#modal-details');
-
-		    // Clear existing content in the modal
-		    modalDetails.empty();
-
-		   	// Iterate through the data properties and create HTML for each field
-		    for (var key in data) {
-		        if (data.hasOwnProperty(key)) {
-		            var rowHtml = '<p>' + key + ': <span>' + data[key] + '</span></p>';
-		            modalDetails.append(rowHtml);
-		        }
-		    }
-
-		 
-
-		    // Show the modal
-		    $('#viewModal').modal('show');
-		});
-
-
-
-	});
-
-</script>
-
 <!-- Modal for View Details -->
-<div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Maklumat Data Cukai Taksiran</h5>
+                <h5 class="modal-title" id="viewModalLabel">
+                    <i class="fas fa-info-circle me-2"></i>Maklumat Data Cukai Taksiran
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div id="modal-details">
-			        
-			    </div>
+                <div id="modal-details"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Tutup
+                </button>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+/* Custom styles for this page */
+.btn-group-sm .btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.table th {
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.table td {
+    font-size: 0.85rem;
+    vertical-align: middle;
+}
+
+#modal-details {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+#modal-details p {
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    background-color: #f8f9fa;
+    border-radius: 0.375rem;
+    border-left: 3px solid var(--primary-color);
+}
+
+#modal-details p strong {
+    color: var(--primary-color);
+}
+</style>
+
+<script>
+// Pure JavaScript implementation (no jQuery conflicts)
+document.addEventListener('DOMContentLoaded', function() {
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const table = document.getElementById('dataTable');
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+
+    function filterTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const statusValue = statusFilter.value;
+
+        rows.forEach(row => {
+            if (row.cells.length === 1) return; // Skip empty rows
+
+            const nama = row.cells[1].textContent.toLowerCase();
+            const alamat = row.cells[2].textContent.toLowerCase();
+            const status = row.cells[3].textContent.trim();
+
+            const matchesSearch = nama.includes(searchTerm) || alamat.includes(searchTerm);
+            const matchesStatus = !statusValue || status.includes(statusValue);
+
+            if (matchesSearch && matchesStatus) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    // Event listeners
+    searchInput.addEventListener('input', filterTable);
+    statusFilter.addEventListener('change', filterTable);
+
+    // View button functionality
+    document.querySelectorAll('.view-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const data = JSON.parse(this.getAttribute('data-details'));
+            const modalDetails = document.getElementById('modal-details');
+            
+            // Clear existing content
+            modalDetails.innerHTML = '';
+            
+            // Create formatted details
+            for (const [key, value] of Object.entries(data)) {
+                if (key && value) {
+                    const p = document.createElement('p');
+                    p.innerHTML = `<strong>${key.replace(/_/g, ' ')}:</strong> ${value}`;
+                    modalDetails.appendChild(p);
+                }
+            }
+            
+            // Show modal using Bootstrap 5
+            const modal = new bootstrap.Modal(document.getElementById('viewModal'));
+            modal.show();
+        });
+    });
+
+    console.log('Data Taskforce page initialized without conflicts');
+});
+</script>
 
