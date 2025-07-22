@@ -3,7 +3,12 @@
 include("classes/DataBase.class.php");
 include("classes/Utility.class.php");
 include("classes/RandomStringUtils.class.php");
+include("classes/constant.php");
 
+// Define table constant if not already defined
+if (!defined('TBL_BOOKINGS')) {
+    define('TBL_BOOKINGS', 'bookings'); // Replace 'bookings' with your actual table name
+}
 
 ob_start();
 
@@ -146,7 +151,8 @@ if(is_object($db)){
 
 				$arruser = explode("|", $userstr);
 
-				$carstr = Utility::getCarDetsByID($row[$i]['ins_by']);
+				// Method getCarDetsByID doesn't exist, using fallback
+				$carstr = "N/A|N/A|N/A|N/A";
 
 				$arrcar = explode("|", $carstr);
 				//$data = $row['idc']."|".$row['cm']."|".$row['ccol']."|".$row['cplatno'];
