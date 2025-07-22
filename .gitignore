@@ -38,6 +38,11 @@ key.json
 gcp-credentials.json
 *-key.json
 
+# Old library folders (now using Composer)
+tcpdf_old/
+tcpdf/ 
+# Keep using local tcpdf for now but ignore old versions
+
 # Cache and temporary files
 cache/
 tmp/

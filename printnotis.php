@@ -94,7 +94,7 @@ $idrecord = (isset($_GET['data']))?$_GET['data']:'';
 $connection->close();
 
 
-require_once('tcpdf/tcpdf.php');
+require_once 'vendor/autoload.php';
 
 
 class MYPDF extends TCPDF {

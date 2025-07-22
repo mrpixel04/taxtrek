@@ -94,7 +94,7 @@ $connection->close();
 
 //generating pdf
 
-require_once('tcpdf/tcpdf.php');
+require_once 'vendor/autoload.php';
 
 
 class MYPDF extends TCPDF {

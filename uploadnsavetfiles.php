@@ -1,8 +1,8 @@
 <?php 
 
-
-
 include('vendor/autoload.php');
+
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 
 
@@ -18,7 +18,7 @@ if (isset($_POST['submit'])) {
        die("Please select an Excel file.");
     }
 
-    $objPHPExcel = PHPExcel_IOFactory::load($file);
+    $objPHPExcel = IOFactory::load($file);
 
 
     // Specify the sheet name (You may need to adjust this)

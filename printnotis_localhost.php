@@ -2,7 +2,7 @@
 
 
 include("classes/conn.php");
-require_once('tcpdf/tcpdf.php');
+require_once 'vendor/autoload.php';
 
 ob_start();
 

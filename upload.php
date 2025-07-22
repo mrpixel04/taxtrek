@@ -2,8 +2,7 @@
 
 require __DIR__.'/vendor/autoload.php';
 
-
-
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 include('classes/conn.php');
 
@@ -16,11 +15,8 @@ if (isset($_POST['submit'])) {
         die("Please select an Excel file.");
     }
 
-    // Load the PHPExcel library (Make sure you have it installed)
-    //require_once 'PHPExcel/PHPExcel.php';
-
-    // Create a new PHPExcel object
-    $objPHPExcel = PHPExcel_IOFactory::load($file);
+    // Create a new PhpSpreadsheet object
+    $objPHPExcel = IOFactory::load($file);
 
   	//conneciton db tuff here
 
