@@ -5,6 +5,7 @@ $db_host = "localhost";
 
 $db_user = "taskforce_user";
 $db_pass = "Fbi220319";
+$db_name = "dbtaxtrek";
 /*
 $db_user = "root";
 $db_pass = "";
