@@ -151,55 +151,7 @@ if ($connection !== null) {
             transform: translateY(-2px);
         }
 
-        /* User Dropdown */
-        .user-dropdown .dropdown-toggle {
-            background: var(--primary-gradient);
-            color: var(--white);
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 50px;
-            font-weight: 500;
-            box-shadow: 0 8px 25px var(--shadow-heavy);
-            transition: all 0.3s ease;
-        }
 
-        .user-dropdown .dropdown-toggle:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 35px var(--shadow-heavy);
-        }
-
-        .user-dropdown .dropdown-toggle::after {
-            margin-left: 8px;
-        }
-
-        .user-dropdown .dropdown-toggle:focus {
-            box-shadow: 0 0 0 0.2rem rgba(128, 0, 255, 0.25);
-        }
-
-        .user-dropdown .dropdown-menu {
-            border: none;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-            padding: 1rem 0;
-            min-width: 280px;
-            margin-top: 0.5rem;
-            backdrop-filter: blur(20px);
-            background: rgba(255, 255, 255, 0.95);
-        }
-
-        .user-info {
-            padding: 1.5rem;
-            background: linear-gradient(135deg, rgba(128, 0, 255, 0.05), rgba(255, 0, 204, 0.05));
-            border-radius: 16px;
-            margin: 0 1rem 1rem 1rem;
-            border: 1px solid rgba(128, 0, 255, 0.1);
-        }
-
-        .user-info .fw-bold {
-            font-size: 16px;
-            color: var(--text-dark);
-            margin-bottom: 0.25rem;
-        }
 
         .badge {
             font-size: 11px;
@@ -365,14 +317,7 @@ if ($connection !== null) {
                 text-align: center;
             }
             
-            .user-dropdown {
-                width: 100%;
-            }
-            
-            .user-dropdown .dropdown-toggle {
-                width: 100%;
-                justify-content: center;
-            }
+
         }
 
         @media (max-width: 768px) {
@@ -569,34 +514,16 @@ if ($connection !== null) {
                                 </a>
                             </li>
                         <?php endif; ?>
+                        
+                        <!-- Account Menu for All Users -->
+                        <li class="nav-item <?php if (($_GET['page'] ?? '') == 'page_akaun.php') echo 'active'; ?>">
+                            <a class="nav-link" href="?page=page_akaun.php">
+                                <i class="fas fa-user-circle me-2"></i>Akaun Saya
+                            </a>
+                        </li>
                     </ul>
 
-                <!-- User Dropdown -->
-                <div class="dropdown user-dropdown">
-                    <button class="btn dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-user-circle me-2"></i>
-                        <span class="d-none d-sm-inline"><?php echo htmlspecialchars($_SESSION['user_fullname']); ?></span>
-                        <span class="d-sm-none">Menu</span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        <li class="user-info">
-                            <div class="fw-bold"><?php echo htmlspecialchars($_SESSION['user_fullname']); ?></div>
-                            <small class="text-muted d-block mb-2"><?php echo htmlspecialchars($_SESSION['user_no_gaji']); ?></small>
-                            <span class="badge bg-<?php echo $_SESSION['user_level'] === 'ADMIN' ? 'danger' : 'primary'; ?> me-1">
-                                <?php echo $_SESSION['user_level']; ?>
-                            </span>
-                            <span class="badge bg-<?php echo $_SESSION['user_ispaid'] === 'PAID' ? 'success' : 'warning'; ?>">
-                                <?php echo $_SESSION['user_ispaid']; ?>
-                            </span>
-                        </li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <a class="dropdown-item logout-btn" href="#" onclick="confirmLogout(); return false;">
-                                <i class="fas fa-sign-out-alt me-2"></i>Log Keluar
-                            </a>
-                </li>
-            </ul>
-                </div>
+
         </div>
     </div>
 </nav>
@@ -613,8 +540,23 @@ if ($connection !== null) {
                 $page = ($userLevel === 'ADMIN') ? 'dashboard.php' : 'customer_dashboard.php';
             }
             
+            // Check for shared pages first (accessible by both ADMIN and CUSTOMER)
+            if ($page == 'page_akaun.php') {
+                if (file_exists('page_akaun.php')) {
+                    include('page_akaun.php');
+                } else {
+                    echo '<div class="page-card">';
+                    echo '<div class="card-body text-center py-5">';
+                    echo '<i class="fas fa-exclamation-triangle fa-4x text-warning mb-4"></i>';
+                    echo '<h5>File Tidak Dijumpai</h5>';
+                    echo '<p class="text-muted">page_akaun.php tidak wujud.</p>';
+                    echo '<a href="main.php" class="btn btn-primary">Kembali ke Dashboard</a>';
+                    echo '</div>';
+                    echo '</div>';
+                }
+            }
             // Role-based content loading
-            if ($userLevel === 'ADMIN') {
+            elseif ($userLevel === 'ADMIN') {
                 // ADMIN CONTENT
                 if ($page == 'dashboard.php') {
                     // Admin Dashboard content
@@ -920,43 +862,8 @@ if ($connection !== null) {
             console.log('TaxTrek system initialized');
             console.log('User level: <?php echo $_SESSION['user_level']; ?>');
             
-            // Simple dropdown initialization with jQuery
+            // Simple initialization - no dropdown needed
             setTimeout(function() {
-                // Use jQuery for dropdown handling
-                if (typeof $ !== 'undefined') {
-                    console.log('Using jQuery for dropdown initialization');
-                    
-                    // Initialize Bootstrap dropdowns using jQuery
-                    $('.dropdown-toggle').dropdown();
-                    
-                    // Handle user dropdown specifically
-                    $('#userDropdown').off('click').on('click', function(e) {
-                        e.preventDefault();
-                        console.log('User dropdown clicked via jQuery');
-                        $(this).dropdown('toggle');
-                    });
-                    
-                    // Close dropdowns when clicking outside
-                    $(document).off('click.dropdown').on('click.dropdown', function(e) {
-                        if (!$(e.target).closest('.dropdown').length) {
-                            $('.dropdown-menu.show').removeClass('show');
-                        }
-                    });
-                    
-                } else {
-                    console.log('jQuery not available, using vanilla JS');
-                    // Fallback to simple vanilla JS
-                    const userDropdown = document.getElementById('userDropdown');
-                    if (userDropdown) {
-                        userDropdown.addEventListener('click', function(e) {
-                            e.preventDefault();
-                            const menu = this.nextElementSibling;
-                            if (menu) {
-                                menu.classList.toggle('show');
-                            }
-                        });
-                    }
-                }
                 
                 // Initialize navbar collapse for mobile
                 const navbarToggler = document.querySelector('.navbar-toggler');
