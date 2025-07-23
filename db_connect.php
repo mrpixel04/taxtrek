@@ -2,8 +2,8 @@
 // db_connect.php - Fresh database connection file
 
 $db_host = "localhost";
-$db_user = "root";
-$db_pass = "";
+$db_user = "taskforce_user";
+$db_pass = "Fbi220319";
 $db_name = "dbtaxtrek";
 
 $connection = new mysqli($db_host, $db_user, $db_pass, $db_name);
