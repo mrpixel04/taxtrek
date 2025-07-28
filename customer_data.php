@@ -199,9 +199,37 @@ if ($connection !== null) {
         <!-- Customer Data Table -->
         <div class="table-responsive customer-table">
             <?php if (!empty($customer_data)): ?>
+                <!-- Bulk Actions Bar -->
+                <div class="bulk-actions-bar mb-3" id="bulkActionsBar" style="display: none;">
+                    <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded">
+                        <div>
+                            <span class="fw-bold text-primary">
+                                <i class="fas fa-check-square me-2"></i>
+                                <span id="selectedCount">0</span> rekod dipilih
+                            </span>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-success me-2" id="bulkPrintBtn">
+                                <i class="fas fa-print me-2"></i>Cetak PDF Terpilih
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" id="clearSelectionBtn">
+                                <i class="fas fa-times me-2"></i>Kosongkan Pilihan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <table class="table table-hover" id="customerDataTable">
                     <thead class="table-dark">
                         <tr>
+                            <th style="width: 50px;">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="selectAllCheckbox" title="Pilih semua">
+                                    <label class="form-check-label" for="selectAllCheckbox">
+                                        <i class="fas fa-check-square"></i>
+                                    </label>
+                                </div>
+                            </th>
                             <th>BIL</th>
                             <th>NAMA PEMILIK</th>
                             <th>ALAMAT</th>
@@ -216,6 +244,16 @@ if ($connection !== null) {
                         foreach($customer_data as $row): 
                         ?>
                             <tr class="customer-data-row">
+                                <td>
+                                    <?php if (!empty($row['iddata'])): ?>
+                                        <div class="form-check">
+                                            <input class="form-check-input row-checkbox" type="checkbox" 
+                                                   value="<?php echo htmlspecialchars($row['iddata']); ?>" 
+                                                   id="checkbox_<?php echo $row['iddata']; ?>"
+                                                   title="Pilih untuk cetak PDF">
+                                        </div>
+                                    <?php endif; ?>
+                                </td>
                                 <td><?php echo $bil; ?></td>
                                 <td>
                                     <div class="customer-name">
@@ -419,6 +457,88 @@ if ($connection !== null) {
     box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
 }
 
+/* Bulk Actions Styling */
+.bulk-actions-bar {
+    animation: slideDown 0.3s ease-out;
+    border: 2px solid #007bff;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.bulk-actions-bar .btn {
+    font-weight: 600;
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.bulk-actions-bar .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+#bulkPrintBtn {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border: none;
+    color: white;
+    box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3);
+}
+
+#bulkPrintBtn:hover {
+    background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+}
+
+/* Checkbox Styling */
+.form-check-input {
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 4px;
+    border: 2px solid #6c757d;
+    transition: all 0.2s ease;
+}
+
+.form-check-input:checked {
+    background-color: #007bff;
+    border-color: #007bff;
+    transform: scale(1.1);
+}
+
+.form-check-input:hover {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+/* Row selection highlighting */
+.customer-data-row.selected {
+    background-color: rgba(0, 123, 255, 0.1) !important;
+    border-left: 4px solid #007bff;
+}
+
+.customer-data-row.selected:hover {
+    background-color: rgba(0, 123, 255, 0.15) !important;
+}
+
+/* Select all checkbox styling */
+#selectAllCheckbox {
+    transform: scale(1.1);
+}
+
+#selectAllCheckbox:checked {
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
 /* Modal details formatting */
 #customerModalDetails {
     max-height: 400px;
@@ -558,6 +678,40 @@ if ($connection !== null) {
     .quick-filter-btn {
         margin-bottom: 0.5rem;
     }
+    
+    /* Bulk actions responsive */
+    .bulk-actions-bar .d-flex {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .bulk-actions-bar .btn {
+        width: 100%;
+        margin: 0 !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    /* Table responsive adjustments */
+    #customerDataTable th:first-child,
+    #customerDataTable td:first-child {
+        width: 40px;
+        padding: 0.5rem 0.25rem;
+    }
+    
+    .form-check-input {
+        width: 1rem;
+        height: 1rem;
+    }
+}
+
+/* Print styles (hide checkboxes when printing) */
+@media print {
+    .form-check,
+    .bulk-actions-bar,
+    .btn-group {
+        display: none !important;
+    }
 }
 </style>
 
@@ -582,6 +736,7 @@ $(document).ready(function() {
     // Initialize the page
     updateResultsCount();
     initializeEventHandlers();
+    initializeBulkSelection();
     
     // Initialize all event handlers
     function initializeEventHandlers() {
@@ -723,6 +878,224 @@ $(document).ready(function() {
         
         console.log('Event handlers set up successfully');
     }
+    
+    // Bulk selection functionality
+    function initializeBulkSelection() {
+        console.log('Initializing bulk selection functionality...');
+        
+        // Select All checkbox handler
+        $('#selectAllCheckbox').on('change', function() {
+            const isChecked = $(this).is(':checked');
+            const visibleCheckboxes = $('.row-checkbox').filter(':visible');
+            
+            visibleCheckboxes.prop('checked', isChecked);
+            visibleCheckboxes.each(function() {
+                const row = $(this).closest('tr');
+                if (isChecked) {
+                    row.addClass('selected');
+                } else {
+                    row.removeClass('selected');
+                }
+            });
+            
+            updateBulkActionsBar();
+            updateSelectedCount();
+        });
+        
+        // Individual row checkbox handlers
+        $(document).on('change', '.row-checkbox', function() {
+            const row = $(this).closest('tr');
+            const isChecked = $(this).is(':checked');
+            
+            if (isChecked) {
+                row.addClass('selected');
+            } else {
+                row.removeClass('selected');
+            }
+            
+            // Update select all checkbox state
+            const totalVisible = $('.row-checkbox:visible').length;
+            const totalChecked = $('.row-checkbox:visible:checked').length;
+            
+            $('#selectAllCheckbox').prop('indeterminate', totalChecked > 0 && totalChecked < totalVisible);
+            $('#selectAllCheckbox').prop('checked', totalChecked === totalVisible && totalVisible > 0);
+            
+            updateBulkActionsBar();
+            updateSelectedCount();
+        });
+        
+        // Bulk print button handler
+        $('#bulkPrintBtn').on('click', function() {
+            const selectedIds = [];
+            $('.row-checkbox:checked').each(function() {
+                selectedIds.push($(this).val());
+            });
+            
+            if (selectedIds.length === 0) {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'Tiada Pilihan',
+                        text: 'Sila pilih sekurang-kurangnya satu rekod untuk dicetak.',
+                        icon: 'warning',
+                        confirmButtonColor: '#007bff'
+                    });
+                } else {
+                    alert('Sila pilih sekurang-kurangnya satu rekod untuk dicetak.');
+                }
+                return;
+            }
+            
+            // Confirm bulk print
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Cetak PDF Terpilih?',
+                    text: `Anda akan mencetak ${selectedIds.length} PDF. Ini akan membuka beberapa tab baru.`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: '<i class="fas fa-print me-2"></i>Ya, Cetak Semua',
+                    cancelButtonText: '<i class="fas fa-times me-2"></i>Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        performBulkPrint(selectedIds);
+                    }
+                });
+            } else {
+                if (confirm(`Anda akan mencetak ${selectedIds.length} PDF. Ini akan membuka beberapa tab baru. Teruskan?`)) {
+                    performBulkPrint(selectedIds);
+                }
+            }
+        });
+        
+        // Clear selection button handler
+        $('#clearSelectionBtn').on('click', function() {
+            $('.row-checkbox').prop('checked', false);
+            $('#selectAllCheckbox').prop('checked', false).prop('indeterminate', false);
+            $('.customer-data-row').removeClass('selected');
+            updateBulkActionsBar();
+            updateSelectedCount();
+        });
+    }
+    
+    // Perform bulk PDF printing
+    function performBulkPrint(selectedIds) {
+        console.log('Starting bulk print for IDs:', selectedIds);
+        
+        if (selectedIds.length === 0) {
+            return;
+        }
+        
+        // Show progress indicator
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Menjana PDF...',
+                html: `Mencipta PDF tunggal dengan ${selectedIds.length} rekod.<br><small>Sila tunggu sebentar...</small>`,
+                icon: 'info',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+        }
+        
+        // Create bulk PDF URL with all IDs
+        const baseUrl = '<?php echo $base_url; ?>bulk_cetaknotisbm.php?ids=';
+        const idsString = selectedIds.join(',');
+        const bulkPdfUrl = baseUrl + encodeURIComponent(idsString);
+        
+        console.log('Opening bulk PDF:', bulkPdfUrl);
+        
+        // Small delay to show the loading message
+        setTimeout(() => {
+            // Open the bulk PDF in a new tab
+            const newWindow = window.open(bulkPdfUrl, '_blank');
+            
+            if (!newWindow) {
+                // Popup was blocked
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'Popup Disekat!',
+                        html: `
+                            <p>Browser anda menyekat popup. Sila:</p>
+                            <ol class="text-start">
+                                <li>Klik pada ikon popup di bar alamat</li>
+                                <li>Pilih "Always allow popups from this site"</li>
+                                <li>Cuba sekali lagi</li>
+                            </ol>
+                            <hr>
+                            <p><small>Atau klik butang di bawah untuk buka manual:</small></p>
+                            <a href="${bulkPdfUrl}" target="_blank" class="btn btn-primary">
+                                <i class="fas fa-external-link-alt me-2"></i>Buka PDF Manual
+                            </a>
+                        `,
+                        icon: 'warning',
+                        confirmButtonColor: '#007bff',
+                        confirmButtonText: 'OK'
+                    });
+                } else {
+                    alert('Popup disekat! Sila benarkan popup untuk laman ini dan cuba lagi.');
+                    // Fallback: redirect to PDF
+                    window.location.href = bulkPdfUrl;
+                }
+            } else {
+                // PDF opened successfully
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'PDF Berjaya Dijana!',
+                        html: `
+                            <div class="text-center">
+                                <i class="fas fa-file-pdf fa-3x text-danger mb-3"></i>
+                                <p>PDF dengan <strong>${selectedIds.length} rekod</strong> telah dibuka di tab baru.</p>
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Semua rekod digabungkan dalam satu dokumen PDF yang berterusan.
+                                </small>
+                            </div>
+                        `,
+                        icon: 'success',
+                        confirmButtonColor: '#28a745',
+                        timer: 4000,
+                        showConfirmButton: true,
+                        confirmButtonText: 'Tutup'
+                    });
+                }
+            }
+        }, 800);
+    }
+    
+    // Update bulk actions bar visibility
+    function updateBulkActionsBar() {
+        const checkedCount = $('.row-checkbox:checked').length;
+        const bulkActionsBar = $('#bulkActionsBar');
+        
+        if (checkedCount > 0) {
+            bulkActionsBar.show();
+        } else {
+            bulkActionsBar.hide();
+        }
+    }
+    
+    // Update selected count display
+    function updateSelectedCount() {
+        const checkedCount = $('.row-checkbox:checked').length;
+        $('#selectedCount').text(checkedCount);
+    }
+    
+    // Enhanced apply filters to handle checkboxes
+    const originalApplyFilters = applyFilters;
+    applyFilters = function() {
+        originalApplyFilters();
+        
+        // Reset bulk selections when filters change
+        $('.row-checkbox').prop('checked', false);
+        $('#selectAllCheckbox').prop('checked', false).prop('indeterminate', false);
+        $('.customer-data-row').removeClass('selected');
+        updateBulkActionsBar();
+        updateSelectedCount();
+    };
     
     // Improved apply filters function
     function applyFilters() {

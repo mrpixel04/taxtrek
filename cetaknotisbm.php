@@ -39,6 +39,7 @@ $idrecord = (isset($_GET['data']))?$_GET['data']:'';
             $alamat2 = $row['ALAMAT2'];
             $poskod = $row['POSKOD'];
             //$noakaun = $row['NOAKAUN'];
+            $noakaun = $row['NOAKAUNDREAMS'];
             
             $tarikhbuat = $row['TARIKH_BUAT']; 
             
@@ -142,171 +143,183 @@ $pdf->SetAutoPageBreak(TRUE, 0);
 
 $pdf->Image('images/headerimg.png', 4, 3, 200, 48, 'png', '', 'center', true, 150, '', false, false, 0, false, false, false);
 
-// HTML table content - Fixed without br tags and proper indentation
-$tbl = <<<EOD
-<style>
-    table { margin-top: 40px; }
-</style>
+// Force content to start below header image (same fix as bulk version)
+$pdf->SetY(20);  // Start content at Y position 60 (well below the header)
 
+// HTML table content - EXACT SAME structure as bulk_cetaknotisbm.php
+$html = '
+ <style>
+       
+        p{
+            padding-top:290px !important;
+        }          
+    </style>
+   <br/>
+   <br/>
+   <br/>
+   <br/>
+   <br/>
+   <br/>
+   <br/>
+   
+   
+  
 <table border="0">
     <tr style="font-size:11px !important;">
-        <td align="right" width="65%" colspan="2">Rujukan Kami&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </td> 
-        <td width="35%">   (&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)DBKL/JKW/2023/HASIL-44</td>
+        <td align="right" width="65%" colspan="2">Rujukan Kami   : </td> 
+        <td width="35%">   (    )DBKL/JKW/2023/HASIL-44</td>
     </tr>
-    <tr style="font-size:11px !important;">
+     <tr style="font-size:11px !important;">
         <td width="52%"></td>
         <td align="left" width="13%">Tarikh </td> 
-        <td width="35%">:&nbsp;&nbsp;$tarikhbuatFinal</td>
+        <td width="35%">:&nbsp;&nbsp;'.$tarikhbuatFinal.'</td>
     </tr>
-    <tr><td colspan="3">&nbsp;</td></tr>
-    <tr><td colspan="3">&nbsp;</td></tr>
-    
-    <tr>
-        <td colspan="3" style="font-size:10px !important;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>$namapemilik</strong></td>
-    </tr>
-    <tr>
-        <td colspan="3" style="font-size:10px !important;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>$norumah</strong></td>
+ 
+    <br/>
+     <tr>
+        <td colspan="3" style="font-size:10px !important;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>'.$namapemilik.'</strong></td>
+        
     </tr>
     <tr>
-        <td colspan="3" style="font-size:10px !important;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>$alamat1</strong></td>
+        <td colspan="3" style="font-size:10px !important;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>'.$norumah.' </strong></td>
+        
     </tr>
-EOD;
+    <tr>
+        <td colspan="3" style="font-size:10px !important;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>'.$alamat1.'</strong></td>
+        
+    </tr>';
 
 if($alamat2 == "-" || $alamat2 == " - " || empty($alamat2) || $alamat2 == null){
-    $tbl .= <<<EOD
-    <tr>
-        <td colspan="3" style="font-size:10px !important;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>$poskod KUALA LUMPUR</strong></td>
-    </tr>
-EOD;
+    // Skip alamat2 if empty
 } else {
-    $tbl .= <<<EOD
+    $html .= '
     <tr>
-        <td colspan="3" style="font-size:10px !important;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>$alamat2</strong></td>
-    </tr>
-    <tr>
-        <td colspan="3" style="font-size:10px !important;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>$poskod KUALA LUMPUR</strong></td>
-    </tr>
-EOD;
+        <td colspan="3" style="font-size:10px !important;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>'.$alamat2.'</strong></td>
+        
+    </tr>';
 }
 
-$tbl .= <<<EOD
-    <tr><td colspan="3">&nbsp;</td></tr>
-    <tr><td colspan="3">&nbsp;</td></tr>
-    
+$html .= '
+    <tr>
+        <td colspan="3" style="font-size:10px !important;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>'.$poskod.' KUALA LUMPUR</strong></td>
+        
+    </tr>
+  
+    <br/>
     <tr style="font-size:11px !important;">
         <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tuan / Puan Pemunya / Penyewa harta,</td>
+        
     </tr>
-    
-    <tr><td colspan="3">&nbsp;</td></tr>
-    
+   
+    <br/>
     <tr style="font-weight:bold !important;">
         <td colspan="3" style="font-size:11px !important;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NOTIS TUNTUTAN TUNGGAKAN CUKAI TAKSIRAN</td>
+        
     </tr>
-    
-    <tr><td colspan="3">&nbsp;</td></tr>
-    
-    <tr style="font-weight:bold !important;">
-        <td colspan="3" style="font-size:11px !important;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NAMA PEMUNYA&nbsp;&nbsp;:&nbsp;&nbsp;$namapemilik</td>
+  
+    <br/>
+     <tr style="font-weight:bold !important;">
+        <td colspan="3" style="font-size:11px !important;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NAMA PEMUNYA&nbsp;&nbsp;:&nbsp;&nbsp;'.$namapemilik.'</td>
+        
     </tr>
-    <tr style="font-weight:bold !important;">
-        <td colspan="3" style="font-size:11px !important;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ALAMAT HARTA&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;$norumah $alamat1,</td>
-    </tr>
-EOD;
+     <tr style="font-weight:bold !important;">
+        <td colspan="3" style="font-size:11px !important;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ALAMAT HARTA&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;'.$norumah.' '.$alamat1.',</td>
+        
+    </tr>';
 
 if($alamat2 == "-" || $alamat2 == " - " || empty($alamat2) || $alamat2 == null){
-    $tbl .= <<<EOD
+    $html .= '
     <tr style="font-weight:bold !important;">
-        <td colspan="2" width="26%"></td>
-        <td width="74%" style="font-size:11px !important;">
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$poskod KUALA LUMPUR
+        <td colspan="2" width="26%">
         </td>
-    </tr>
-EOD;
+        <td width="74%" style="font-size:11px !important;">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$poskod.' KUALA LUMPUR
+        </td>
+    </tr>';
 } else {
-    $tbl .= <<<EOD
+    $html .= '
     <tr style="font-weight:bold !important;">
-        <td colspan="2" width="26%"></td>
-        <td width="74%" style="font-size:11px !important;">
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$alamat2, $poskod KUALA LUMPUR
+        <td colspan="2" width="26%">
         </td>
-    </tr>
-EOD;
+        <td width="74%" style="font-size:11px !important;">
+            &nbsp;'.$alamat2.','.$poskod.' KUALA LUMPUR
+        </td>
+    </tr>';
 }
 
-$tbl .= <<<EOD
+$html .= '
     <tr style="font-weight:bold !important;">
-        <td colspan="3" style="font-size:11px !important;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NO AKAUN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;N/A</td>
+        <td colspan="3" style="font-size:11px !important;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NO AKAUN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;'.$noakaun.'</td>
+        
+      
     </tr>
-    
-    <tr><td colspan="3">&nbsp;</td></tr>
-    
+    <br/>
     <tr style="font-size:11px !important;">
         <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adalah saya diarah merujuk kepada perkara di atas.</td>
+        
+      
     </tr>
-    
-    <tr><td colspan="3">&nbsp;</td></tr>
-    
-    <tr style="font-size:11px !important;">
+     <br/>
+     <tr style="font-size:11px !important;">
         <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dimaklumkan bahawa Cukai Taksiran yang dikenakan bagi harta tersebut masih belum</td> 
     </tr>
     <tr style="font-size:11px !important;">
-        <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dibayar dan adalah dalam tunggakan berjumlah <span style="font-weight:bold;">RM $formattedBakitunggakan</span> sehingga <strong>$tarikhSemakDCS</strong></td> 
+        <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dibayar dan adalah dalam tunggakan berjumlah <span style="font-weight:bold;">RM '.$formattedBakitunggakan.'</span>&nbsp; sehingga <strong>'.$tarikhSemakDCS.'</strong></td> 
     </tr>
-    
-    <tr><td colspan="3">&nbsp;</td></tr>
-    
+    <br/>
     <tr style="font-size:11px !important;">
         <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tuan / puan adalah dengan ini dikehendaki menjelaskan bayaran tunggakan di atas</td> 
     </tr>
     <tr style="font-size:11px !important;">
         <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;kepada Datuk Bandar Kuala Lumpur dalam tempoh <span style="font-weight:bold;">EMPAT BELAS (14) HARI</span> dari tarikh surat</td> 
     </tr>
-    <tr style="font-size:11px !important;">
+     <tr style="font-size:11px !important;">
         <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ini disampaikan.</td> 
     </tr>
-    
-    <tr><td colspan="3">&nbsp;</td></tr>
-    
-    <tr style="font-size:11px !important;">
+     <br/>
+     <tr style="font-size:11px !important;">
         <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">DAN AMBIL PERHATIAN </span>bahawa, jika jumlah yang dinyatakan itu tidak dibayar dengan</td> 
     </tr>
     <tr style="font-size:11px !important;">
-        <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;segera, maka tindakan undang-undang akan diambil terhadap anda.</td> 
+        <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sepenuhnya dalam tempoh yang ditetapkan maka pihak Datuk Bandar Kuala Lumpur akan</td> 
     </tr>
-    
-    <tr><td colspan="3">&nbsp;</td></tr>
-    <tr><td colspan="3">&nbsp;</td></tr>
-    
-    <tr style="font-size:12px !important;font-weight:bold;">
+     <tr style="font-size:11px !important;">
+        <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;meneruskan dengan tindakan undang-undang menurut Akta Kerajaan Tempatan 1976 (Akta</td> 
+    </tr>
+     <tr style="font-size:11px !important;">
+        <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;171) di mana segala kos dan perbelanjaan berkaitan hendaklah ditanggung sepenuhnya oleh</td> 
+    </tr>
+     <tr style="font-size:11px !important;">
+        <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tuan / puan.</td> 
+    </tr>
+    <br/>
+     <tr style="font-size:11px !important;">
+        <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sekian, terima kasih.</td> 
+    </tr>
+    <br/>
+     <tr style="font-size:12px !important;font-weight:bols;">
         <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MALAYSIA MADANI"</td> 
     </tr>
-    <tr style="font-size:12px !important;font-weight:bold;">
+     <br/>
+    <tr style="font-size:12px !important;font-weight:bols;">
         <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"BERKHIDMAT UNTUK NEGARA"</td> 
     </tr>
-    <tr style="font-size:12px !important;font-weight:bold;">
+    <tr style="font-size:12px !important;font-weight:bols;">
         <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"BERSEDIA MENYUMBANG, BANDARAYA CEMERLANG"</td> 
     </tr>
-    
-    <tr><td colspan="3">&nbsp;</td></tr>
-    
-    <tr style="font-size:11px !important;">
+  
+      <tr style="font-size:11px !important;">
         <td width="50%;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Saya yang menjalankan amanah.</td> 
-        <td width="40%;" align="left">
-            <div style="border:0.5px solid black;font-size:9px !important;padding:5px !important;font-weight:bold !important;text-align:center !important;">
-                Sila abaikan notis ini sekiranya bayaran penuh telah dibuat.
-            </div>
+        <td width="40%;"  align:"left">
+            <div style="border:0.5px solid black;font-size:9px !important;padding-left:16px !important;font-weight:bold !important;text-align:center !important;" height="40px;"><\n><br/>&nbsp;Sila abaikan notis ini sekiranya bayaran<br/>penuh telah dibuat.<br/></div>
+        
         </td>
         <td width="10%;"></td>
     </tr>
-    
-    <tr><td colspan="3">&nbsp;</td></tr>
-    
     <tr style="font-size:9px !important;">
         <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b.p. Datuk Bandar Kuala Lumpur</td> 
     </tr>
-    
-    <tr><td colspan="3">&nbsp;</td></tr>
-    
+    <br/>
     <tr style="font-size:8px !important;">
         <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nama Ahli TF21 : <strong>Zakiah Hanum Binti Khusrin @ Kosrin</strong></td> 
     </tr>
@@ -314,13 +327,12 @@ $tbl .= <<<EOD
         <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No. Tel : <strong>013-6245570</strong></td> 
     </tr>
     <tr style="font-size:8px !important;">
-        <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tarikh Lawatan : <strong>$tarikhbuatFinal</strong></td> 
+        <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tarikh Lawatan : <strong>'.$tarikhbuatFinal.'</strong></td> 
     </tr>
-</table>
-EOD;
+</table>';
 
 // Output the HTML table content
-$pdf->writeHTML($tbl, true, false, false, false, '');
+$pdf->writeHTML($html, true, false, false, false, '');
 
 // Output the PDF
 $filename = 'Notis_Cukai_Pintu_' . (isset($namapemilik) ? str_replace(' ', '_', $namapemilik) : 'Unknown') . '_' . date('Y-m-d') . '.pdf';

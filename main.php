@@ -358,7 +358,7 @@ if ($connection !== null) {
                 margin-bottom: 1rem;
             }
     
-            .navbar-nav .nav-link {
+        .navbar-nav .nav-link {
                 margin: 0.25rem 0;
                 text-align: center;
             }

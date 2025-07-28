@@ -137,7 +137,13 @@ $pdf->AddPage();
 $pdf->SetMargins(0, 20, 0);
 $pdf->SetAutoPageBreak(TRUE, 0);
 
+// Reset Y position to ensure proper positioning (same fix as bulk version)
+$pdf->SetY(20);
+
 $pdf->Image('images/headerimg.png', 4, 3, 200, 48, 'png', '', 'center', true, 150, '', false, false, 0, false, false, false);
+
+// Force content to start below header image
+$pdf->SetY(60);  // Start content at Y position 60 (well below the header)
 
 // HTML table content
 
@@ -146,7 +152,7 @@ $html = '
        
 
         p{
-            padding-top:300px !important;
+            padding-top:450px !important;
         }          
     </style>
    <br/>
@@ -158,6 +164,14 @@ $html = '
    <br/>
    <br/>
    <br/>
+   <br/>
+   <br/>
+   <br/>
+   <br/>
+   <br/>
+   <br/>
+   
+   
   
 <table border="0">
     <tr style="font-size:11px !important;">
@@ -217,7 +231,7 @@ $html = '
         <td colspan="2" width="26%">
         </td>
         <td width="74%" style="font-size:11px !important;">
-            &nbsp;&nbsp;'.$alamat2.','.$poskod.' 
+            &nbsp;'.$alamat2.','.$poskod.' 
         </td>
     </tr>
     <tr style="font-weight:bold !important;">
@@ -304,8 +318,7 @@ $html = '
 
 
     
-</table>
-';
+</table>';
 
 
 // Output the HTML table content
