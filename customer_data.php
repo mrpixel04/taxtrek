@@ -148,6 +148,9 @@ if ($connection !== null) {
                         <i class="fas fa-info-circle me-1"></i>
                         Menunjukkan <span id="visibleCount"><?php echo count($customer_data); ?></span> 
                         daripada <span id="totalCount"><?php echo count($customer_data); ?></span> rekod
+                        <span id="activeFiltersIndicator" class="badge bg-primary ms-2" style="display: none;">
+                            <i class="fas fa-filter me-1"></i>Penapisan Aktif
+                        </span>
                     </div>
                     <div class="d-flex align-items-center">
                         <label for="entriesPerPage" class="form-label me-2 mb-0">Papar:</label>
@@ -161,6 +164,24 @@ if ($connection !== null) {
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- No Results Message (Initially Hidden) -->
+        <div id="noResultsMessage" class="alert alert-info text-center" style="display: none;">
+            <i class="fas fa-search fa-2x mb-3 text-muted"></i>
+            <h6>Tiada Hasil Carian</h6>
+            <p class="mb-2">Tiada data yang sepadan dengan kriteria carian anda.</p>
+            <small class="text-muted">
+                Sila cuba:
+                <ul class="list-unstyled mt-2">
+                    <li>• Gunakan kata kunci yang lebih pendek</li>
+                    <li>• Periksa ejaan kata kunci</li>
+                    <li>• Gunakan carian yang lebih umum</li>
+                </ul>
+            </small>
+            <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="clearAllFilters()">
+                <i class="fas fa-times me-1"></i>Reset Semua Carian
+            </button>
         </div>
 
         <!-- Legacy Status Filter (keeping for compatibility) -->
@@ -265,6 +286,11 @@ if ($connection !== null) {
                                             <i class="fas fa-eye me-1"></i>Lihat
                                         </button>
                                         <?php if (!empty($row['iddata'])): ?>
+                                            <a href="?page=kemaskini_data.php&id=<?php echo urlencode($row['iddata']); ?>" 
+                                               class="btn btn-outline-warning btn-sm" 
+                                               title="Edit maklumat alamat dan amaun">
+                                                <i class="fas fa-edit me-1"></i>Edit
+                                            </a>
                                             <?php $printUrl = $base_url."cetaknotisbm.php?data=".$row['iddata']; ?>
                                             <a href="<?php echo $printUrl; ?>" 
                                                class="btn btn-outline-success btn-sm" 
@@ -455,6 +481,30 @@ if ($connection !== null) {
     box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
 }
 
+.search-filters-container .form-control.has-value {
+    border-color: #28a745;
+    background-color: #f8fff9;
+}
+
+.search-filters-container .form-select.has-value {
+    border-color: #28a745;
+    background-color: #f8fff9;
+}
+
+#noResultsMessage ul {
+    display: inline-block;
+    text-align: left;
+}
+
+.search-active-indicator {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #28a745;
+    font-size: 0.8rem;
+}
+
 .quick-filters {
     padding: 1rem;
     background-color: white;
@@ -527,6 +577,8 @@ $(document).ready(function() {
         state: ''
     };
     
+    console.log('Total rows found:', allRows.length);
+    
     // Initialize the page
     updateResultsCount();
     initializeEventHandlers();
@@ -535,41 +587,98 @@ $(document).ready(function() {
     function initializeEventHandlers() {
         console.log('Setting up event handlers...');
         
-        // Search inputs with real-time filtering
+        // Search inputs with real-time filtering and visual feedback
         $('#searchName').on('input', debounce(function() {
-            currentFilters.name = $(this).val().toLowerCase().trim();
+            const value = $(this).val().trim();
+            currentFilters.name = value.toLowerCase();
+            console.log('Name search:', currentFilters.name);
+            
+            // Add visual feedback
+            if (value.length > 0) {
+                $(this).addClass('has-value');
+            } else {
+                $(this).removeClass('has-value');
+            }
+            
             applyFilters();
         }, 300));
         
         $('#searchAddress').on('input', debounce(function() {
-            currentFilters.address = $(this).val().toLowerCase().trim();
+            const value = $(this).val().trim();
+            currentFilters.address = value.toLowerCase();
+            console.log('Address search:', currentFilters.address);
+            
+            // Add visual feedback
+            if (value.length > 0) {
+                $(this).addClass('has-value');
+            } else {
+                $(this).removeClass('has-value');
+            }
+            
             applyFilters();
         }, 300));
         
         $('#searchLocation').on('input', debounce(function() {
-            currentFilters.location = $(this).val().toLowerCase().trim();
+            const value = $(this).val().trim();
+            currentFilters.location = value.toLowerCase();
+            console.log('Location search:', currentFilters.location);
+            
+            // Add visual feedback
+            if (value.length > 0) {
+                $(this).addClass('has-value');
+            } else {
+                $(this).removeClass('has-value');
+            }
+            
             applyFilters();
         }, 300));
         
-        // Dropdown filters
+        // Dropdown filters with visual feedback
         $('#filterStatus').on('change', function() {
             currentFilters.status = $(this).val();
+            console.log('Status filter:', currentFilters.status);
+            
+            // Add visual feedback
+            if ($(this).val().length > 0) {
+                $(this).addClass('has-value');
+            } else {
+                $(this).removeClass('has-value');
+            }
+            
             applyFilters();
         });
         
         $('#filterUpdate').on('change', function() {
             currentFilters.update = $(this).val();
+            console.log('Update filter:', currentFilters.update);
+            
+            // Add visual feedback
+            if ($(this).val().length > 0) {
+                $(this).addClass('has-value');
+            } else {
+                $(this).removeClass('has-value');
+            }
+            
             applyFilters();
         });
         
         $('#filterState').on('change', function() {
             currentFilters.state = $(this).val();
+            console.log('State filter:', currentFilters.state);
+            
+            // Add visual feedback
+            if ($(this).val().length > 0) {
+                $(this).addClass('has-value');
+            } else {
+                $(this).removeClass('has-value');
+            }
+            
             applyFilters();
         });
         
         // Apply and Clear buttons
         $('#applyFilters').on('click', function() {
-            console.log('Apply filters clicked');
+            console.log('Apply filters clicked - Current filters:', currentFilters);
             applyFilters();
         });
         
@@ -580,7 +689,9 @@ $(document).ready(function() {
         
         // Quick filter buttons
         $('.quick-filter-btn').on('click', function() {
-            console.log('Quick filter clicked:', $(this).data('filter'));
+            const filterType = $(this).data('filter');
+            const filterValue = $(this).data('value');
+            console.log('Quick filter clicked:', filterType, '=', filterValue);
             handleQuickFilter($(this));
         });
         
@@ -613,72 +724,150 @@ $(document).ready(function() {
         console.log('Event handlers set up successfully');
     }
     
-    // Apply all filters
+    // Improved apply filters function
     function applyFilters() {
-        console.log('Applying filters:', currentFilters);
-        let visibleCount = 0;
+        console.log('=== APPLYING FILTERS ===');
+        console.log('Current filters:', currentFilters);
         
-        allRows.each(function() {
+        let visibleCount = 0;
+        let totalProcessed = 0;
+        
+        allRows.each(function(index) {
+            totalProcessed++;
             const row = $(this);
             const cells = row.find('td');
             
             if (cells.length < 5) {
+                console.log('Row', index, 'has insufficient cells:', cells.length);
                 row.hide();
                 return;
             }
             
-            // Get cell content
-            const nameText = cells.eq(1).text().toLowerCase();
-            const addressText = cells.eq(2).text().toLowerCase();
-            const statusText = cells.eq(3).text().trim();
-            const updateText = cells.eq(4).text().trim();
+            // Get cell content with improved text extraction
+            const nameText = cells.eq(1).text().toLowerCase().trim();
+            const addressContent = cells.eq(2); // Get the whole address cell
+            const addressText = addressContent.text().toLowerCase().trim();
+            
+            // Extract status badge text more precisely
+            const statusBadge = cells.eq(3).find('.badge');
+            const statusText = statusBadge.length > 0 ? statusBadge.text().trim() : cells.eq(3).text().trim();
+            
+            const updateBadge = cells.eq(4).find('.badge');
+            const updateText = updateBadge.length > 0 ? updateBadge.text().trim() : cells.eq(4).text().trim();
+            
+            // Debug info for first few rows
+            if (index < 3) {
+                console.log(`Row ${index} data:`, {
+                    name: nameText,
+                    address: addressText.substring(0, 50) + '...',
+                    status: statusText,
+                    update: updateText
+                });
+            }
             
             let showRow = true;
+            let failedFilters = [];
             
-            // Apply filters
-            if (currentFilters.name && !nameText.includes(currentFilters.name)) {
-                showRow = false;
+            // Apply name filter
+            if (currentFilters.name && currentFilters.name.length > 0) {
+                if (!nameText.includes(currentFilters.name)) {
+                    showRow = false;
+                    failedFilters.push('name');
+                }
             }
             
-            if (currentFilters.address && !addressText.includes(currentFilters.address)) {
-                showRow = false;
+            // Apply address filter (search in full address text)
+            if (currentFilters.address && currentFilters.address.length > 0) {
+                if (!addressText.includes(currentFilters.address)) {
+                    showRow = false;
+                    failedFilters.push('address');
+                }
             }
             
-            if (currentFilters.location && !addressText.includes(currentFilters.location)) {
-                showRow = false;
+            // Apply location filter (also search in address text)
+            if (currentFilters.location && currentFilters.location.length > 0) {
+                if (!addressText.includes(currentFilters.location)) {
+                    showRow = false;
+                    failedFilters.push('location');
+                }
             }
             
-            if (currentFilters.status && !statusText.includes(currentFilters.status)) {
-                showRow = false;
+            // Apply status filter (exact match on status badge text)
+            if (currentFilters.status && currentFilters.status.length > 0) {
+                if (!statusText.includes(currentFilters.status)) {
+                    showRow = false;
+                    failedFilters.push('status');
+                }
             }
             
-            if (currentFilters.update) {
-                const hasUpdate = updateText.includes('SUDAH KEMASKINI');
-                if (currentFilters.update === 'YES' && !hasUpdate) showRow = false;
-                if (currentFilters.update === 'NO' && hasUpdate) showRow = false;
+            // Apply update filter (check if it contains the expected text)
+            if (currentFilters.update && currentFilters.update.length > 0) {
+                const hasKemaskini = updateText.includes('SUDAH KEMASKINI') || updateText.includes('SUDAH');
+                if (currentFilters.update === 'YES' && !hasKemaskini) {
+                    showRow = false;
+                    failedFilters.push('update-yes');
+                }
+                if (currentFilters.update === 'NO' && hasKemaskini) {
+                    showRow = false;
+                    failedFilters.push('update-no');
+                }
             }
             
-            if (currentFilters.state && !addressText.includes(currentFilters.state.toLowerCase())) {
-                showRow = false;
+            // Apply state filter (search in address for state name)
+            if (currentFilters.state && currentFilters.state.length > 0) {
+                if (!addressText.includes(currentFilters.state.toLowerCase())) {
+                    showRow = false;
+                    failedFilters.push('state');
+                }
             }
             
             // Show or hide row
             if (showRow) {
                 row.show();
                 visibleCount++;
+                if (index < 3) {
+                    console.log(`Row ${index}: SHOWING`);
+                }
             } else {
                 row.hide();
+                if (index < 3) {
+                    console.log(`Row ${index}: HIDING - Failed filters:`, failedFilters);
+                }
             }
         });
         
         // Update results count
         $('#visibleCount').text(visibleCount);
-        console.log('Filters applied, visible rows:', visibleCount);
+        console.log(`Filter results: ${visibleCount} visible out of ${totalProcessed} total rows`);
+        
+        // Show/hide table and no results message
+        const customerTable = $('.customer-table');
+        const noResultsMessage = $('#noResultsMessage');
+        const activeFiltersIndicator = $('#activeFiltersIndicator');
+        
+        if (visibleCount === 0 && totalProcessed > 0) {
+            console.log('No rows match current filters');
+            customerTable.hide();
+            noResultsMessage.show();
+        } else {
+            customerTable.show();
+            noResultsMessage.hide();
+        }
+        
+        // Show active filters indicator
+        const hasActiveFilters = Object.values(currentFilters).some(filter => filter && filter.length > 0);
+        if (hasActiveFilters) {
+            activeFiltersIndicator.show();
+        } else {
+            activeFiltersIndicator.hide();
+        }
+        
+        console.log('=== FILTERS APPLIED ===');
     }
     
     // Clear all filters
     function clearAllFilters() {
-        console.log('Clearing all filters');
+        console.log('=== CLEARING ALL FILTERS ===');
         
         // Reset filter object
         currentFilters = {
@@ -690,9 +879,9 @@ $(document).ready(function() {
             state: ''
         };
         
-        // Clear form inputs
-        $('#searchName, #searchAddress, #searchLocation').val('');
-        $('#filterStatus, #filterUpdate, #filterState').val('');
+        // Clear form inputs and remove visual styling
+        $('#searchName, #searchAddress, #searchLocation').val('').removeClass('has-value');
+        $('#filterStatus, #filterUpdate, #filterState').val('').removeClass('has-value');
         
         // Remove active class from quick filter buttons
         $('.quick-filter-btn').removeClass('active');
@@ -700,13 +889,18 @@ $(document).ready(function() {
         // Show all rows
         allRows.show();
         
+        // Hide no results message and show table
+        $('#noResultsMessage').hide();
+        $('.customer-table').show();
+        $('#activeFiltersIndicator').hide();
+        
         // Update results count
         updateResultsCount();
         
         // Focus on first input
         $('#searchName').focus();
         
-        console.log('All filters cleared');
+        console.log('All filters cleared - showing all', allRows.length, 'rows');
     }
     
     // Handle quick filter buttons
@@ -714,33 +908,47 @@ $(document).ready(function() {
         const filterType = button.data('filter');
         const filterValue = button.data('value');
         
-        console.log('Quick filter:', filterType, filterValue);
+        console.log('=== QUICK FILTER ===');
+        console.log('Type:', filterType, 'Value:', filterValue);
         
-        // Remove active class from all quick filter buttons
+        // Remove active class from all quick filter buttons of the same type
         $('.quick-filter-btn').removeClass('active');
         
         // Add active class to clicked button
         button.addClass('active');
         
-        // Clear all other filters first
-        clearAllFilters();
+        // Clear other filters but keep current type
+        $('#searchName, #searchAddress, #searchLocation').val('');
         
         // Apply the specific quick filter
         switch(filterType) {
             case 'status':
                 currentFilters.status = filterValue;
                 $('#filterStatus').val(filterValue);
+                // Clear other filters
+                currentFilters.name = currentFilters.address = currentFilters.location = '';
+                currentFilters.update = currentFilters.state = '';
+                $('#filterUpdate, #filterState').val('');
                 break;
             case 'update':
                 currentFilters.update = filterValue;
                 $('#filterUpdate').val(filterValue);
+                // Clear other filters
+                currentFilters.name = currentFilters.address = currentFilters.location = '';
+                currentFilters.status = currentFilters.state = '';
+                $('#filterStatus, #filterState').val('');
                 break;
             case 'location':
                 currentFilters.state = filterValue;
                 $('#filterState').val(filterValue);
+                // Clear other filters
+                currentFilters.name = currentFilters.address = currentFilters.location = '';
+                currentFilters.status = currentFilters.update = '';
+                $('#filterStatus, #filterUpdate').val('');
                 break;
         }
         
+        console.log('Quick filter applied:', currentFilters);
         applyFilters();
     }
     
@@ -829,8 +1037,36 @@ $(document).ready(function() {
         console.log('Modal displayed');
     }
     
+    // Test search functionality
+    function testSearchFunctionality() {
+        console.log('=== TESTING SEARCH FUNCTIONALITY ===');
+        
+        // Test name search
+        console.log('Testing name search...');
+        currentFilters.name = 'test';
+        applyFilters();
+        
+        // Reset
+        setTimeout(() => {
+            clearAllFilters();
+            
+            // Test address search
+            console.log('Testing address search...');
+            currentFilters.address = 'jalan';
+            applyFilters();
+            
+            // Reset
+            setTimeout(() => {
+                clearAllFilters();
+                console.log('Search functionality test completed');
+            }, 1000);
+        }, 1000);
+    }
+    
     // Make functions globally available
     window.showCustomerDataDetails = showCustomerDataDetails;
+    window.testSearchFunctionality = testSearchFunctionality;
+    window.clearAllFilters = clearAllFilters;
     
     // Debounce function to limit rapid firing
     function debounce(func, wait) {
@@ -845,7 +1081,19 @@ $(document).ready(function() {
         };
     }
     
+    // Add a test button for debugging (temporary)
+    if (window.location.search.includes('debug=1')) {
+        $('body').append(`
+            <div style="position: fixed; top: 10px; right: 10px; z-index: 9999;">
+                <button onclick="testSearchFunctionality()" class="btn btn-warning btn-sm">Test Search</button>
+                <button onclick="console.log('Current filters:', window.currentFilters || 'undefined')" class="btn btn-info btn-sm">Log Filters</button>
+            </div>
+        `);
+        window.currentFilters = currentFilters;
+    }
+    
     console.log('Customer data page initialization complete with jQuery');
+    console.log('Available for testing: Add ?debug=1 to URL to show test buttons');
 });
 
 // Contact support function (outside document ready)

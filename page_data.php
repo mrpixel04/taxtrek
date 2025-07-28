@@ -29,28 +29,28 @@ $base_url = dirname($base_url) . '/';
         </div>
 
         <!-- Data Table -->
-        <div class="table-responsive">
+	<div class="table-responsive">
             <table class="table table-striped table-hover" id="dataTable">
                 <thead class="table-dark">
-                    <tr>
-                        <th>BIL</th>
-                        <th>NAMA PEMILIK</th>
-                        <th>ALAMAT 1</th>
-                        <th>STATUS</th>
-                        <th>STATUS KEMASKINI</th>
-                        <th>TINDAKAN</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
+	            <tr>
+	                <th>BIL</th>
+	                <th>NAMA PEMILIK</th>
+	                <th>ALAMAT 1</th>
+	                <th>STATUS</th>
+	                <th>STATUS KEMASKINI</th>
+	                <th>TINDAKAN</th>
+	            </tr>
+	        </thead>
+	        <tbody>
+	        	 <?php
                     if ($connection !== null) {
-                        $sql = "SELECT * FROM TBL_DATA";
+	            $sql = "SELECT * FROM TBL_DATA";
                         $result = mysqli_query($connection, $sql);
 
                         if ($result && mysqli_num_rows($result) > 0) {
                             $bil = 1;
                             while($row = mysqli_fetch_assoc($result)) {
-                                echo "<tr>";
+	                    echo "<tr>";
                                 echo "<td>" . $bil . "</td>";
                                 echo "<td>" . htmlspecialchars($row['NAMA_PEMILIK'] ?? 'N/A') . "</td>";
                                 echo "<td>" . htmlspecialchars($row['ALAMAT_1'] ?? 'N/A') . "</td>";
@@ -66,9 +66,9 @@ $base_url = dirname($base_url) . '/';
                                 echo "</td>";
 
                                 // Action buttons
-                                $urlprintnotisbm = $base_url."cetaknotisbm.php?data=".$row['iddata'];
-                                $urlprintnotisbi = $base_url."printnotisbi.php?data=".$row['iddata'];
-                                $urleditnotis = "?page=editalamat.php&data=".$row['iddata'];
+	            		$urlprintnotisbm = $base_url."cetaknotisbm.php?data=".$row['iddata'];
+	            		$urlprintnotisbi = $base_url."printnotisbi.php?data=".$row['iddata'];
+	            		$urleditnotis = "?page=editalamat.php&data=".$row['iddata'];
 
                                 echo "<td>";
                                 echo "<div class='btn-group btn-group-sm' role='group'>";
@@ -80,9 +80,9 @@ $base_url = dirname($base_url) . '/';
                                 echo "<i class='fas fa-print me-1'></i>Notis</a>";
                                 echo "</div>";
                                 echo "</td>";
-                                echo "</tr>";
+	                    echo "</tr>";
                                 $bil++;
-                            }
+	                }
                         } else {
                             echo "<tr><td colspan='6' class='text-center text-muted py-4'>";
                             echo "<i class='fas fa-inbox fa-3x mb-3 d-block'></i>";
@@ -93,10 +93,10 @@ $base_url = dirname($base_url) . '/';
                     } else {
                         echo "<tr><td colspan='6' class='text-center text-danger'>Ralat sambungan pangkalan data</td></tr>";
                     }
-                    ?>
-                </tbody>
-            </table>
-        </div>
+	            ?>
+	        </tbody>
+	    </table>
+	</div>
 
         <!-- Pagination -->
         <nav aria-label="Page navigation" id="paginationNav" style="display: none;">

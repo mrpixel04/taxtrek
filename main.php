@@ -176,8 +176,18 @@ if ($connection !== null) {
 
         /* Main Content */
         .main-content {
-            padding: 2rem 0;
+            padding: 2rem 1rem;
             min-height: calc(100vh - 100px);
+            width: 100%;
+            max-width: none;
+        }
+
+        /* Full-width container */
+        .container-fluid {
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+            width: 100%;
+            max-width: none;
         }
 
         /* Dashboard Cards */
@@ -191,6 +201,7 @@ if ($connection !== null) {
             position: relative;
             overflow: hidden;
             margin-bottom: 1.5rem;
+            height: 100%;
         }
 
         .stats-card::before {
@@ -233,7 +244,7 @@ if ($connection !== null) {
             margin: 0;
         }
 
-        /* Page Cards */
+        /* Page Cards - Full Width */
         .page-card {
             background: var(--white);
             border-radius: 20px;
@@ -241,6 +252,7 @@ if ($connection !== null) {
             box-shadow: 0 8px 30px var(--shadow-light);
             overflow: hidden;
             margin-bottom: 1.5rem;
+            width: 100%;
         }
 
         .page-card .card-header {
@@ -260,7 +272,7 @@ if ($connection !== null) {
             padding: 2rem;
         }
 
-        /* Welcome Section */
+        /* Welcome Section - Full Width */
         .welcome-section {
             background: var(--white);
             border-radius: 20px;
@@ -270,6 +282,7 @@ if ($connection !== null) {
             text-align: center;
             position: relative;
             overflow: hidden;
+            width: 100%;
         }
 
         .welcome-section::before {
@@ -294,7 +307,40 @@ if ($connection !== null) {
             margin-bottom: 1rem;
         }
 
-        /* Responsive Design */
+        /* Content Area - Full Width */
+        .content-area {
+            width: 100%;
+            max-width: none;
+            padding: 0;
+        }
+
+        /* Grid Improvements for Full Width */
+        .row {
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        .row > [class*="col-"] {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+
+        /* Stats Grid - Better Distribution */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Quick Actions Grid */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Responsive Design - Full Width */
         @media (max-width: 991.98px) {
             .navbar-brand {
                 font-size: 24px;
@@ -312,22 +358,35 @@ if ($connection !== null) {
                 margin-bottom: 1rem;
             }
     
-        .navbar-nav .nav-link {
+            .navbar-nav .nav-link {
                 margin: 0.25rem 0;
                 text-align: center;
             }
-            
 
+            .container-fluid {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 1rem;
+            }
+
+            .actions-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
         }
 
         @media (max-width: 768px) {
             .main-content {
-                padding: 1rem 0;
+                padding: 1rem 0.5rem;
             }
             
-            .container {
-                padding-left: 1rem;
-                padding-right: 1rem;
+            .container-fluid {
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
             }
             
             .stats-card {
@@ -349,6 +408,11 @@ if ($connection !== null) {
             
             .page-card .card-body {
                 padding: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1rem;
             }
         }
 
@@ -373,6 +437,16 @@ if ($connection !== null) {
             
             .welcome-section h2 {
                 font-size: 20px;
+            }
+
+            .container-fluid {
+                padding-left: 0.25rem;
+                padding-right: 0.25rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
             }
         }
 
@@ -464,7 +538,7 @@ if ($connection !== null) {
 <body>
     <!-- Modern Navigation -->
     <nav class="navbar navbar-expand-lg">
-    <div class="container">
+    <div class="container-fluid">
             <!-- Brand -->
             <a class="navbar-brand" href="#">
                 <i class="fas fa-chart-line me-2"></i>TaxTrek
@@ -520,8 +594,8 @@ if ($connection !== null) {
                             <a class="nav-link" href="?page=page_akaun.php">
                                 <i class="fas fa-user-circle me-2"></i>Akaun Saya
                             </a>
-                        </li>
-                    </ul>
+                </li>
+            </ul>
 
 
         </div>
@@ -529,8 +603,8 @@ if ($connection !== null) {
 </nav>
 
     <!-- Main Content -->
-    <div class="container main-content">
-        <div class="fade-in">
+    <div class="container-fluid main-content">
+        <div class="content-area fade-in">
 <?php 
             $page = isset($_GET['page']) ? $_GET['page'] : ''; 
             $userLevel = $_SESSION['user_level'];
@@ -565,8 +639,7 @@ if ($connection !== null) {
                     echo '<p class="lead">Sistem pengurusan pentadbiran yang komprehensif untuk keperluan perniagaan anda, ' . htmlspecialchars($_SESSION['user_fullname']) . '</p>';
                     echo '</div>';
                     
-                    echo '<div class="row g-4 mb-4">';
-                    echo '<div class="col-lg-3 col-md-6 col-sm-6">';
+                    echo '<div class="stats-grid">';
                     echo '<div class="stats-card">';
                     echo '<div class="card-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">';
                     echo '<i class="fas fa-users"></i>';
@@ -574,9 +647,7 @@ if ($connection !== null) {
                     echo '<h3>2</h3>';
                     echo '<p>Total Pengguna Aktif</p>';
                     echo '</div>';
-                    echo '</div>';
                     
-                    echo '<div class="col-lg-3 col-md-6 col-sm-6">';
                     echo '<div class="stats-card">';
                     echo '<div class="card-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">';
                     echo '<i class="fas fa-credit-card"></i>';
@@ -584,9 +655,7 @@ if ($connection !== null) {
                     echo '<h3>2</h3>';
                     echo '<p>Bayaran Selesai</p>';
                     echo '</div>';
-                    echo '</div>';
                     
-                    echo '<div class="col-lg-3 col-md-6 col-sm-6">';
                     echo '<div class="stats-card">';
                     echo '<div class="card-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">';
                     echo '<i class="fas fa-database"></i>';
@@ -594,9 +663,7 @@ if ($connection !== null) {
                     echo '<h3>0</h3>';
                     echo '<p>Data Taskforce</p>';
                     echo '</div>';
-                    echo '</div>';
                     
-                    echo '<div class="col-lg-3 col-md-6 col-sm-6">';
                     echo '<div class="stats-card">';
                     echo '<div class="card-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">';
                     echo '<i class="fas fa-chart-bar"></i>';
@@ -605,11 +672,9 @@ if ($connection !== null) {
                     echo '<p>Laporan Dijana</p>';
                     echo '</div>';
                     echo '</div>';
-                    echo '</div>';
                     
                     // Admin Quick Actions
-                    echo '<div class="row g-4">';
-                    echo '<div class="col-lg-6 col-md-6">';
+                    echo '<div class="actions-grid">';
                     echo '<div class="page-card">';
                     echo '<div class="card-header">';
                     echo '<h4><i class="fas fa-rocket me-2"></i>Tindakan Pentadbir</h4>';
@@ -622,9 +687,7 @@ if ($connection !== null) {
                     echo '</div>';
                     echo '</div>';
                     echo '</div>';
-                    echo '</div>';
                     
-                    echo '<div class="col-lg-6 col-md-6">';
                     echo '<div class="page-card">';
                     echo '<div class="card-header">';
                     echo '<h4><i class="fas fa-bell me-2"></i>Aktiviti Sistem</h4>';
@@ -633,7 +696,6 @@ if ($connection !== null) {
                     echo '<div class="text-muted text-center py-4">';
                     echo '<i class="fas fa-cogs fa-3x mb-3"></i>';
                     echo '<p>Panel aktiviti sistem untuk pentadbir</p>';
-                    echo '</div>';
                     echo '</div>';
                     echo '</div>';
                     echo '</div>';
@@ -692,7 +754,7 @@ if ($connection !== null) {
                         
                         if (!empty(trim($dashboard_content))) {
                             echo $dashboard_content;
-                        } else {
+    } else {
                             // Fallback content if include fails
                             echo '<div class="welcome-section customer-welcome">';
                             echo '<h2><i class="fas fa-user-circle me-3"></i>Selamat Datang, ' . htmlspecialchars($_SESSION['user_fullname']) . '</h2>';
@@ -708,8 +770,7 @@ if ($connection !== null) {
                             echo '</div>';
                             echo '</div>';
                             
-                            echo '<div class="row g-4 mb-4">';
-                            echo '<div class="col-lg-4 col-md-6 col-sm-6">';
+                            echo '<div class="stats-grid">';
                             echo '<div class="stats-card customer-stat">';
                             echo '<div class="card-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">';
                             echo '<i class="fas fa-file-alt"></i>';
@@ -717,9 +778,7 @@ if ($connection !== null) {
                             echo '<h3>0</h3>';
                             echo '<p>Jumlah Data Saya</p>';
                             echo '</div>';
-                            echo '</div>';
                             
-                            echo '<div class="col-lg-4 col-md-6 col-sm-6">';
                             echo '<div class="stats-card customer-stat">';
                             echo '<div class="card-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">';
                             echo '<i class="fas fa-check-circle"></i>';
@@ -727,9 +786,7 @@ if ($connection !== null) {
                             echo '<h3>0</h3>';
                             echo '<p>Selesai</p>';
                             echo '</div>';
-                            echo '</div>';
                             
-                            echo '<div class="col-lg-4 col-md-6 col-sm-6">';
                             echo '<div class="stats-card customer-stat">';
                             echo '<div class="card-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">';
                             echo '<i class="fas fa-clock"></i>';
@@ -738,10 +795,8 @@ if ($connection !== null) {
                             echo '<p>Belum Selesai</p>';
                             echo '</div>';
                             echo '</div>';
-                            echo '</div>';
                             
-                            echo '<div class="row g-4">';
-                            echo '<div class="col-lg-6 col-md-6">';
+                            echo '<div class="actions-grid">';
                             echo '<div class="page-card customer-actions">';
                             echo '<div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">';
                             echo '<h4><i class="fas fa-rocket me-2"></i>Tindakan Pantas</h4>';
@@ -757,9 +812,7 @@ if ($connection !== null) {
                             echo '</div>';
                             echo '</div>';
                             echo '</div>';
-                            echo '</div>';
                             
-                            echo '<div class="col-lg-6 col-md-6">';
                             echo '<div class="page-card">';
                             echo '<div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">';
                             echo '<h4><i class="fas fa-info-circle me-2"></i>Maklumat Akaun</h4>';
@@ -768,7 +821,6 @@ if ($connection !== null) {
                             echo '<p><strong>Nama:</strong> ' . htmlspecialchars($_SESSION['user_fullname']) . '</p>';
                             echo '<p><strong>No Gaji:</strong> ' . htmlspecialchars($_SESSION['user_no_gaji']) . '</p>';
                             echo '<p><strong>Status:</strong> <span class="badge bg-' . ($_SESSION['user_ispaid'] === 'PAID' ? 'success' : 'warning') . '">' . $_SESSION['user_ispaid'] . '</span></p>';
-                            echo '</div>';
                             echo '</div>';
                             echo '</div>';
                             echo '</div>';
@@ -800,6 +852,21 @@ if ($connection !== null) {
                         echo '</div>';
                         echo '</div>';
                     }
+                } elseif ($page == 'kemaskini_data.php') {
+                    if (file_exists('kemaskini_data.php')) {
+                        include('kemaskini_data.php');
+                    } else {
+                        echo '<div class="page-card">';
+                        echo '<div class="card-header">';
+                        echo '<h4><i class="fas fa-edit me-2"></i>Kemaskini Data</h4>';
+                        echo '</div>';
+                        echo '<div class="card-body text-center py-5">';
+                        echo '<i class="fas fa-exclamation-triangle fa-4x text-warning mb-4"></i>';
+                        echo '<h5>File Kemaskini Tidak Dijumpai</h5>';
+                        echo '<p class="text-muted">kemaskini_data.php tidak wujud.</p>';
+                        echo '</div>';
+                        echo '</div>';
+                    }
                 } else {
                     // Access denied for unauthorized pages
                     echo '<div class="page-card">';
@@ -812,8 +879,8 @@ if ($connection !== null) {
                     echo '</div>';
                 }
             }
-            ?>
-        </div>
+?>
+</div>
     </div>
 
     <!-- Scripts -->
