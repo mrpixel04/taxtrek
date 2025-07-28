@@ -62,4 +62,18 @@ temp/
 *.avi
 
 # Node modules if you use any frontend build tools
-node_modules/ 
+node_modules/
+
+# Telegram Bot & n8n Workflow Files (Private)
+TELEGRAM_BOT_SETUP.md
+GROUP_CHAT_ID_SETUP_GUIDE.md
+n8n_http_request_modification.md
+n8n_taxtrek_telegram_workflow.json
+n8n_taxtrek_telegram_workflow_filtered.json
+n8n_group_filter_addition.txt
+telegram_bot_api.php
+api_get_notice.php
+
+# Other guide files (keep private)
+auto_deploy.md
+DEPLOYMENT.md 
