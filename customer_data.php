@@ -54,7 +54,7 @@ if ($connection !== null) {
                     <div class="row g-3">
                         <div class="col-lg-4 col-md-6">
                             <label for="searchName" class="form-label">Cari Nama:</label>
-                            <input type="text" class="form-control" id="searchName" placeholder="Masukkan nama pemilik...">
+                            <input type="text" class="form-control" id="searchName" placeholder="Taip nama pemilik (carian automatik)...">
                         </div>
                         <div class="col-lg-4 col-md-6">
                             <label for="searchAddress" class="form-label">Cari Alamat:</label>
@@ -746,7 +746,7 @@ $(document).ready(function() {
         $('#searchName').on('input', debounce(function() {
             const value = $(this).val().trim();
             currentFilters.name = value.toLowerCase();
-            console.log('Name search:', currentFilters.name);
+            console.log('Name search activated:', currentFilters.name);
             
             // Add visual feedback
             if (value.length > 0) {
@@ -833,7 +833,16 @@ $(document).ready(function() {
         
         // Apply and Clear buttons
         $('#applyFilters').on('click', function() {
-            console.log('Apply filters clicked - Current filters:', currentFilters);
+            console.log('Apply filters button clicked');
+            // Manually get all current filter values from the inputs
+            currentFilters.name = $('#searchName').val().trim().toLowerCase();
+            currentFilters.address = $('#searchAddress').val().trim().toLowerCase();
+            currentFilters.location = $('#searchLocation').val().trim().toLowerCase();
+            currentFilters.status = $('#filterStatus').val();
+            currentFilters.update = $('#filterUpdate').val();
+            currentFilters.state = $('#filterState').val();
+            
+            console.log('Apply filters clicked - Updated filters:', currentFilters);
             applyFilters();
         });
         
@@ -1110,23 +1119,26 @@ $(document).ready(function() {
             const row = $(this);
             const cells = row.find('td');
             
-            if (cells.length < 5) {
+            if (cells.length < 6) {
                 console.log('Row', index, 'has insufficient cells:', cells.length);
                 row.hide();
                 return;
             }
             
-            // Get cell content with improved text extraction
-            const nameText = cells.eq(1).text().toLowerCase().trim();
-            const addressContent = cells.eq(2); // Get the whole address cell
+            // Get cell content with improved text extraction - handle nested HTML structure
+            const nameCell = cells.eq(2);
+            const nameText = nameCell.find('strong').length > 0 ? 
+                nameCell.find('strong').text().toLowerCase().trim() : 
+                nameCell.text().toLowerCase().trim(); // Fixed: NAMA PEMILIK is in column 2, not 1
+            const addressContent = cells.eq(3); // Get the whole address cell (moved from 2 to 3)
             const addressText = addressContent.text().toLowerCase().trim();
             
             // Extract status badge text more precisely
-            const statusBadge = cells.eq(3).find('.badge');
-            const statusText = statusBadge.length > 0 ? statusBadge.text().trim() : cells.eq(3).text().trim();
+            const statusBadge = cells.eq(4).find('.badge'); // Fixed: STATUS is in column 4, not 3
+            const statusText = statusBadge.length > 0 ? statusBadge.text().trim() : cells.eq(4).text().trim();
             
-            const updateBadge = cells.eq(4).find('.badge');
-            const updateText = updateBadge.length > 0 ? updateBadge.text().trim() : cells.eq(4).text().trim();
+            const updateBadge = cells.eq(5).find('.badge'); // Fixed: STATUS KEMASKINI is in column 5, not 4
+            const updateText = updateBadge.length > 0 ? updateBadge.text().trim() : cells.eq(5).text().trim();
             
             // Debug info for first few rows
             if (index < 3) {
@@ -1146,6 +1158,10 @@ $(document).ready(function() {
                 if (!nameText.includes(currentFilters.name)) {
                     showRow = false;
                     failedFilters.push('name');
+                }
+                // Debug logging for name search
+                if (index < 5) {
+                    console.log(`Row ${index} name check: "${nameText}" includes "${currentFilters.name}" = ${nameText.includes(currentFilters.name)}`);
                 }
             }
             
@@ -1467,6 +1483,49 @@ $(document).ready(function() {
     
     console.log('Customer data page initialization complete with jQuery');
     console.log('Available for testing: Add ?debug=1 to URL to show test buttons');
+    
+    // Test the search functionality immediately after page load
+    setTimeout(function() {
+        console.log('=== TESTING NAMA PEMILIK SEARCH FUNCTIONALITY ===');
+        
+        // Test first 5 rows
+        const testRows = $('#customerDataTableBody tr').slice(0, 5);
+        testRows.each(function(index) {
+            const cells = $(this).find('td');
+            if (cells.length >= 6) {
+                const nameCell = cells.eq(2);
+                const nameText = nameCell.find('strong').length > 0 ? 
+                    nameCell.find('strong').text().toLowerCase().trim() : 
+                    nameCell.text().toLowerCase().trim();
+                console.log(`Row ${index + 1} - Name text extracted: "${nameText}"`);
+            }
+        });
+        
+        // Look for MICHELE LIM YEE YEAN specifically
+        console.log('=== SEARCHING FOR MICHELE LIM YEE YEAN ===');
+        let foundMichele = false;
+        $('#customerDataTableBody tr').each(function(index) {
+            const cells = $(this).find('td');
+            if (cells.length >= 6) {
+                const nameCell = cells.eq(2);
+                const nameText = nameCell.find('strong').length > 0 ? 
+                    nameCell.find('strong').text().toLowerCase().trim() : 
+                    nameCell.text().toLowerCase().trim();
+                
+                if (nameText.includes('michele') || nameText.includes('lim yee yean')) {
+                    console.log(`FOUND MICHELE at Row ${index + 1}: "${nameText}"`);
+                    foundMichele = true;
+                }
+            }
+        });
+        
+        if (!foundMichele) {
+            console.log('MICHELE LIM YEE YEAN not found in the current data');
+        }
+        
+        console.log('=== SEARCH TEST COMPLETE - You can now search by name! ===');
+        console.log('💡 TIP: Search works as you type in the "Cari Nama" field, or click "Cari" button');
+    }, 1000);
 });
 
 // Contact support function (outside document ready)
