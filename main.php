@@ -58,17 +58,41 @@ if ($connection !== null) {
      
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #8000ff 0%, #ff00cc 100%);
-            --primary-color: #8000ff;
-            --secondary-color: #ff00cc;
-            --accent-color: #6c5ce7;
-            --text-dark: #2d3436;
-            --text-light: #636e72;
+            /* Professional SaaS Color Palette - Hazel Theme */
+            --primary-gradient: linear-gradient(135deg, #A67C52 0%, #D2B48C 100%);
+            --primary-color: #A67C52;
+            --secondary-color: #D2B48C;
+            --accent-color: #8B7355;
+            
+            /* Hazel Brand Colors */
+            --hazel: #A67C52;
+            --hazel-light: #D2B48C;
+            --hazel-dark: #8B7355;
+            
+            /* Neutral Base Colors */
+            --cream: #FBF9F6;
+            --warm-white: #FEFEFE;
+            --soft-gray: #F5F5F5;
             --bg-light: #f8fafc;
             --white: #ffffff;
+            
+            /* Text Colors */
+            --text-dark: #2C3E50;
+            --text-light: #7F8C8D;
+            --text-primary: #2C3E50;
+            --text-secondary: #7F8C8D;
+            
+            /* Functional Colors */
+            --accent-blue: #667eea;
+            --accent-green: #27AE60;
+            --accent-orange: #E67E22;
+            
+            /* Shadows & Effects */
             --shadow-light: rgba(0, 0, 0, 0.05);
             --shadow-medium: rgba(0, 0, 0, 0.1);
-            --shadow-heavy: rgba(128, 0, 255, 0.2);
+            --shadow-heavy: rgba(166, 124, 82, 0.2);
+            --shadow-soft: 0 2px 20px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 5px 30px rgba(0, 0, 0, 0.12);
         }
 
         * {
@@ -79,7 +103,7 @@ if ($connection !== null) {
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #FBF9F6 0%, #F5F5F5 100%);
             color: var(--text-dark);
             line-height: 1.6;
             min-height: 100vh;
@@ -89,7 +113,7 @@ if ($connection !== null) {
         .navbar {
             background: var(--white);
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(128, 0, 255, 0.1);
+            border-bottom: 1px solid rgba(166, 124, 82, 0.1);
             box-shadow: 0 4px 30px var(--shadow-light);
             padding: 1rem 0;
             position: sticky;

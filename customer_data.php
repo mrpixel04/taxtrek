@@ -44,6 +44,61 @@ if ($connection !== null) {
         </div>
     </div>
     <div class="card-body">
+        <!-- Important Notice Section -->
+        <div class="info-notice-top mb-4">
+            <div class="notice-icon">
+                <i class="fas fa-info-circle"></i>
+            </div>
+            <div class="notice-content">
+                <h5>📋 Maklumat Penting</h5>
+                <p><strong>Tarikh Buat</strong> adalah tarikh turun di site untuk hantar Notis Tuntutan Tunggakan.</p>
+            </div>
+        </div>
+
+        <!-- Bulk Date Update Section -->
+        <div class="bulk-date-update-section mb-4">
+            <div class="update-card">
+                <div class="update-header">
+                    <div class="update-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="update-title">
+                        <h5>Kemaskini Tarikh Buat - Semua Rekod</h5>
+                        <p class="mb-0">Pilih tarikh untuk kemaskini TARIKH_BUAT pada semua rekod data anda</p>
+                    </div>
+                </div>
+                <div class="update-body">
+                    <div class="row align-items-end">
+                        <div class="col-lg-4 col-md-6">
+                            <label for="bulkDateUpdate" class="form-label">
+                                <i class="fas fa-calendar me-1"></i>Tarikh Baru:
+                            </label>
+                            <input type="date" 
+                                   class="form-control modern-date-input" 
+                                   id="bulkDateUpdate" 
+                                   value="<?php echo date('Y-m-d'); ?>">
+                        </div>
+                        <div class="col-lg-4 col-md-6">
+                            <label class="form-label">Kesan:</label>
+                            <div class="impact-info">
+                                <span class="impact-count" id="recordCount"><?php echo count($customer_data); ?></span>
+                                <span class="impact-text">rekod akan dikemaskini</span>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-12">
+                            <button type="button" 
+                                    class="btn-update-all" 
+                                    id="bulkUpdateDateBtn"
+                                    onclick="updateAllDates()">
+                                <i class="fas fa-sync-alt me-2"></i>
+                                Kemaskini Semua Tarikh
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Enhanced Search Filters -->
         <div class="row mb-4">
             <div class="col-12">
@@ -662,6 +717,31 @@ if ($connection !== null) {
         gap: 1rem;
     }
     
+    /* Mobile optimizations for new sections */
+    .info-notice-top {
+        flex-direction: column;
+        text-align: center;
+        padding: 1rem;
+    }
+    
+    .update-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 1rem;
+    }
+    
+    .update-body {
+        padding: 1rem;
+    }
+    
+    .update-body .row {
+        gap: 1rem;
+    }
+    
+    .btn-update-all {
+        margin-top: 1rem;
+    }
+    
     .btn-group-sm .btn {
         font-size: 0.7rem;
         padding: 0.25rem 0.4rem;
@@ -705,11 +785,164 @@ if ($connection !== null) {
     }
 }
 
+/* New Sections Styling */
+.info-notice-top {
+    background: linear-gradient(135deg, #E8F4FD 0%, #F0F8FF 100%);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.info-notice-top .notice-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #667eea;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.info-notice-top .notice-content h5 {
+    color: #2C3E50;
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 0.3rem 0;
+}
+
+.info-notice-top .notice-content p {
+    color: #5A6C7D;
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Bulk Date Update Section */
+.bulk-date-update-section {
+    background: var(--warm-white);
+    border: 2px solid var(--hazel-light);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+}
+
+.update-card {
+    width: 100%;
+}
+
+.update-header {
+    background: linear-gradient(135deg, var(--hazel) 0%, var(--hazel-light) 100%);
+    color: white;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.update-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+.update-title h5 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 0.3rem 0;
+}
+
+.update-title p {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin: 0;
+}
+
+.update-body {
+    padding: 2rem;
+    background: var(--warm-white);
+}
+
+.modern-date-input {
+    border: 2px solid #E5E7EB;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.modern-date-input:focus {
+    border-color: var(--hazel);
+    box-shadow: 0 0 0 3px rgba(166, 124, 82, 0.1);
+    outline: none;
+}
+
+.impact-info {
+    background: #F8F9FA;
+    border: 1px solid #E9ECEF;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    text-align: center;
+}
+
+.impact-count {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--hazel);
+    line-height: 1;
+}
+
+.impact-text {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.btn-update-all {
+    background: linear-gradient(135deg, var(--hazel) 0%, var(--hazel-light) 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-shadow: 0 3px 10px rgba(166, 124, 82, 0.3);
+}
+
+.btn-update-all:hover {
+    background: linear-gradient(135deg, var(--hazel-dark) 0%, var(--hazel) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(166, 124, 82, 0.4);
+}
+
+.btn-update-all:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(166, 124, 82, 0.3);
+}
+
 /* Print styles (hide checkboxes when printing) */
 @media print {
     .form-check,
     .bulk-actions-bar,
-    .btn-group {
+    .btn-group,
+    .bulk-date-update-section,
+    .info-notice-top {
         display: none !important;
     }
 }
@@ -1227,6 +1460,7 @@ $(document).ready(function() {
         
         // Update results count
         $('#visibleCount').text(visibleCount);
+        $('#recordCount').text(visibleCount); // Update the bulk update record count
         console.log(`Filter results: ${visibleCount} visible out of ${totalProcessed} total rows`);
         
         // Show/hide table and no results message
@@ -1348,6 +1582,7 @@ $(document).ready(function() {
         
         $('#visibleCount').text(visibleCount);
         $('#totalCount').text(totalCount);
+        $('#recordCount').text(visibleCount); // Update bulk update count
         
         console.log('Results count updated:', visibleCount, '/', totalCount);
     }
@@ -1527,6 +1762,150 @@ $(document).ready(function() {
         console.log('💡 TIP: Search works as you type in the "Cari Nama" field, or click "Cari" button');
     }, 1000);
 });
+
+// Bulk Date Update Function
+function updateAllDates() {
+    const selectedDate = $('#bulkDateUpdate').val();
+    const recordCount = $('.customer-data-row:visible').length;
+    
+    if (!selectedDate) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Tarikh Diperlukan',
+                text: 'Sila pilih tarikh terlebih dahulu.',
+                icon: 'warning',
+                confirmButtonColor: '#A67C52'
+            });
+        } else {
+            alert('Sila pilih tarikh terlebih dahulu.');
+        }
+        return;
+    }
+    
+    // Confirmation dialog
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            title: 'Kemaskini Tarikh Buat?',
+            html: `
+                <div class="text-center">
+                    <p>Anda akan mengemas kini <strong>${recordCount} rekod</strong> dengan tarikh:</p>
+                    <p class="fs-5 fw-bold text-primary">${formatDate(selectedDate)}</p>
+                    <small class="text-muted">Tindakan ini tidak boleh dibatalkan.</small>
+                </div>
+            `,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#A67C52',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: '<i class="fas fa-sync-alt me-2"></i>Ya, Kemaskini',
+            cancelButtonText: '<i class="fas fa-times me-2"></i>Batal',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                performBulkDateUpdate(selectedDate, recordCount);
+            }
+        });
+    } else {
+        if (confirm(`Kemaskini ${recordCount} rekod dengan tarikh ${formatDate(selectedDate)}?`)) {
+            performBulkDateUpdate(selectedDate, recordCount);
+        }
+    }
+}
+
+function performBulkDateUpdate(selectedDate, recordCount) {
+    // Show loading
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            title: 'Mengemas kini...',
+            html: `Sedang mengemas kini ${recordCount} rekod.<br><small>Sila tunggu sebentar...</small>`,
+            icon: 'info',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+    }
+    
+    // Get all visible record IDs
+    const recordIds = [];
+    $('.customer-data-row:visible').each(function() {
+        const checkbox = $(this).find('.row-checkbox');
+        if (checkbox.length > 0) {
+            recordIds.push(checkbox.val());
+        }
+    });
+    
+    // Perform AJAX request
+    $.ajax({
+        url: 'update_bulk_date.php', // You'll need to create this file
+        method: 'POST',
+        data: {
+            date: selectedDate,
+            record_ids: recordIds
+        },
+        dataType: 'json'
+    }).done(function(response) {
+        if (response.success) {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Berjaya!',
+                    html: `
+                        <div class="text-center">
+                            <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                            <p><strong>${response.updated_count} rekod</strong> telah berjaya dikemas kini.</p>
+                            <small class="text-muted">Tarikh baru: ${formatDate(selectedDate)}</small>
+                        </div>
+                    `,
+                    icon: 'success',
+                    confirmButtonColor: '#27AE60',
+                    timer: 3000,
+                    showConfirmButton: true,
+                    confirmButtonText: 'Tutup'
+                }).then(() => {
+                    // Reload the page to show updated data
+                    window.location.reload();
+                });
+            } else {
+                alert(`Berjaya mengemas kini ${response.updated_count} rekod.`);
+                window.location.reload();
+            }
+        } else {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Ralat!',
+                    text: response.message || 'Gagal mengemas kini rekod.',
+                    icon: 'error',
+                    confirmButtonColor: '#E67E22'
+                });
+            } else {
+                alert('Ralat: ' + (response.message || 'Gagal mengemas kini rekod.'));
+            }
+        }
+    }).fail(function(xhr, status, error) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Ralat Sambungan!',
+                text: 'Gagal menyambung ke server. Sila cuba lagi.',
+                icon: 'error',
+                confirmButtonColor: '#E67E22'
+            });
+        } else {
+            alert('Ralat sambungan: Sila cuba lagi.');
+        }
+    });
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const options = { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    };
+    return date.toLocaleDateString('ms-MY', options);
+}
 
 // Contact support function (outside document ready)
 function showContactSupport() {

@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
   <style>
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(90deg, #ff00cc, #8000ff); /* Purple to Red */
+      background: linear-gradient(135deg, #A67C52 0%, #D2B48C 100%); /* Hazel Theme */
       animation: gradientMove 10s linear infinite;
     }
     
@@ -142,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
 
     /* Button Styles */
     .btn-primary {
-      background: linear-gradient(90deg, #8000ff, #ff00cc);
+      background: linear-gradient(135deg, #A67C52, #D2B48C);
       border: none;
       transition: all 0.3s ease;
       border-radius: 10px;
@@ -153,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
 
     .btn-primary:hover {
       transform: scale(1.05);
-      background: linear-gradient(90deg, #7000ef, #ef00bc);
+      background: linear-gradient(135deg, #8B7355, #A67C52);
     }
 
     .form-control {
@@ -163,8 +163,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
     }
 
     .form-control:focus {
-      border-color: #8000ff;
-      box-shadow: 0 0 0 0.2rem rgba(128, 0, 255, 0.25);
+      border-color: #A67C52;
+      box-shadow: 0 0 0 0.2rem rgba(166, 124, 82, 0.25);
     }
 
     .form-label {

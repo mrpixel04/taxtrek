@@ -153,7 +153,7 @@ foreach ($idArray as $dataId) {
             <table border="0">
                 <tr style="font-size:11px !important;">
                     <td align="right" width="65%" colspan="2">Rujukan Kami   : </td> 
-                    <td width="35%">   (    )DBKL/JKW/2023/HASIL-44</td>
+                    <td width="35%">   DBKL/JKW/2025/HASIL-26 (  )</td>
                 </tr>
                  <tr style="font-size:11px !important;">
                     <td width="52%"></td>
@@ -227,7 +227,7 @@ foreach ($idArray as $dataId) {
                     <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dimaklumkan bahawa Cukai Taksiran yang dikenakan bagi harta tersebut masih belum</td> 
                 </tr>
                 <tr style="font-size:11px !important;">
-                    <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dibayar dan adalah dalam tunggakan berjumlah <span style="font-weight:bold;">RM '.$formattedBakitunggakan.'</span>&nbsp; sehingga <strong>'.$tarikhSemakDCS.'</strong></td> 
+                    <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dibayar, jumlah tunggakan adalah sebanyak <span style="font-weight:bold;">RM '.$formattedBakitunggakan.'</span>&nbsp; sehingga <strong>'.$tarikhSemakDCS.'</strong></td> 
                 </tr>
                 <br/>
                 <tr style="font-size:11px !important;">

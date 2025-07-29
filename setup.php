@@ -84,7 +84,7 @@ try {
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(90deg, #ff00cc, #8000ff);
+            background: linear-gradient(135deg, #A67C52 0%, #D2B48C 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -101,7 +101,7 @@ try {
         }
         
         .btn-primary {
-            background: linear-gradient(90deg, #8000ff, #ff00cc);
+            background: linear-gradient(135deg, #A67C52, #D2B48C);
             border: none;
             border-radius: 10px;
             padding: 12px 30px;
@@ -110,7 +110,7 @@ try {
         
         .btn-primary:hover {
             transform: scale(1.05);
-            background: linear-gradient(90deg, #7000ef, #ef00bc);
+            background: linear-gradient(135deg, #8B7355, #A67C52);
         }
         
         .status-badge {
