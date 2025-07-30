@@ -7,6 +7,9 @@ header('Access-Control-Allow-Headers: Content-Type');
 // Include database connection
 include('../db_connect.php');
 
+// API to validate user based on employee ID (no_gaji) from TBL_USERS table
+// Returns all user data if employee exists and is active
+
 // Function to send JSON response
 function sendResponse($status, $data = null, $message = '') {
     $response = [
@@ -60,14 +63,16 @@ try {
     $sql = "SELECT 
                 id,
                 no_gaji,
+                katalaluan,
                 fullname,
                 userlevel,
+                last_login_datetime,
                 isactive,
                 ispaid,
                 hpno,
                 email,
                 created_at,
-                last_login_datetime
+                updated_at
             FROM TBL_USERS 
             WHERE no_gaji = ? 
             AND isactive = 'ACTIVE'";
@@ -89,19 +94,20 @@ try {
         // User found
         $user = mysqli_fetch_assoc($result);
         
-        // Prepare response data
+        // Prepare response data based on actual database fields
         $userData = [
             'employee_exists' => true,
+            'id' => $user['id'],
             'employee_id' => $user['no_gaji'],
             'employee_name' => $user['fullname'],
-            'department' => 'General', // Default since not in table
-            'position' => ucfirst(strtolower($user['userlevel'])), // ADMIN/CUSTOMER
-            'employment_status' => $user['isactive'],
-            'payment_status' => $user['ispaid'],
+            'user_level' => $user['userlevel'], // ADMIN/CUSTOMER from enum
+            'is_active' => $user['isactive'], // ACTIVE/NOT ACTIVE from enum
+            'payment_status' => $user['ispaid'], // PAID/NOT PAID from enum
             'phone_number' => $user['hpno'],
             'email' => $user['email'],
-            'last_login' => $user['last_login_datetime'],
-            'member_since' => $user['created_at']
+            'last_login_datetime' => $user['last_login_datetime'],
+            'created_at' => $user['created_at'],
+            'updated_at' => $user['updated_at']
         ];
         
         sendResponse('success', $userData, 'Pengguna berdaftar');
